@@ -1,7 +1,9 @@
-import { Typography } from "@mui/material";
+import React from "react";
+
+import Calender from "./Components/Calender";
 
 const App = () => {
-  return <Typography variant="h2">Event Management</Typography>;
+  return <Calender />;
 };
 
 export default App;
