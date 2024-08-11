@@ -915,7 +915,6 @@
 				"singleQuote": false,
 				"jsxSingleQuote": false,
 				"quoteProps": "as-needed",
-				"trailingComma": "all",
 				"singleAttributePerLine": false,
 				"htmlWhitespaceSensitivity": "css",
 				"vueIndentScriptAndStyle": false,
@@ -926,7 +925,7 @@
 				"tabWidth": 2,
 				"useTabs": false,
 				"embeddedLanguageFormatting": "auto",
-				"endOfLine": "crlf"
+				"endOfLine": "crlf",
 			}
 		],
 		//Perfectionist Lint

@@ -246,7 +246,7 @@ const TagUsers = () => {
                   justifyContent="flex-start"
                   alignItems="center"
                 >
-                  <UserAvatar username={option?.username} width={28} />
+                  <UserAvatar username={option?.username} width={24} />
                   <Typography variant="body1" sx={{ fontSize: "14px" }}>
                     {option?.firstname} {option?.lastname}
                   </Typography>
@@ -267,7 +267,7 @@ const TagUsers = () => {
               justifyContent="flex-start"
               alignItems="center"
             >
-              <UserAvatar username={option?.username} width={36} />
+              <UserAvatar username={option?.username} width={30} />
               <Stack
                 direction="column"
                 justifyContent="flex-start"
@@ -275,9 +275,6 @@ const TagUsers = () => {
               >
                 <Typography variant="body1" sx={{ fontSize: "14px" }}>
                   {option?.firstname} {option?.lastname}
-                </Typography>
-                <Typography variant="body1" sx={{ fontSize: "11px" }}>
-                  {option?.mutual_friends_count} Mutual Friends
                 </Typography>
               </Stack>
             </Stack>

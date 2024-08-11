@@ -6,14 +6,14 @@ import { useSelector } from "react-redux";
 import { CloseOutlined } from "@mui/icons-material";
 import { Stack, Popover, Typography, IconButton } from "@mui/material";
 
-import EventForm from "../Event/EventForm";
-import { DateState } from "../../State/dateState";
-import { getRandomColor } from "../../Utils/generateEventColor";
+import EventForm from "../../Event/EventForm";
+import { DateState } from "../../../State/dateState";
+import { getRandomColor } from "../../../Utils/generateEventColor";
 
 // Create an array of day names
 const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
-const Day = ({ date, index, isLeft, isTopRow, isCurrentMonth }) => {
+const MonthDay = ({ date, index, isLeft, isTopRow, isCurrentMonth }) => {
   const [eventMenuAnchor, setEventMenuAnchor] = useState(null);
   const eventMenuOpen = Boolean(eventMenuAnchor);
 
@@ -134,7 +134,7 @@ const Day = ({ date, index, isLeft, isTopRow, isCurrentMonth }) => {
       >
         <Stack>
           <Stack direction="row" justifyContent="flex-end" alignItems="center">
-            <IconButton disableRipple>
+            <IconButton onClick={handleEventMenuClose} disableRipple>
               <CloseOutlined fontSize="small" />
             </IconButton>
           </Stack>
@@ -145,4 +145,4 @@ const Day = ({ date, index, isLeft, isTopRow, isCurrentMonth }) => {
   );
 };
 
-export default Day;
+export default MonthDay;

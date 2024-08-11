@@ -1,21 +1,15 @@
 /* eslint-disable max-statements */
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import {
-  Menu,
-  Stack,
-  Button,
-  MenuItem,
-  Typography,
-  IconButton,
-} from "@mui/material";
+import { Stack, Button, Typography, IconButton } from "@mui/material";
 
 import UserAvatar from "../UserAvatar";
+import ViewSelector from "./ViewSelector";
+import SettingsMenu from "./SettingsMenu";
 import { setDate, DateState } from "../../../State/dateState";
 
 const Header = () => {
@@ -35,8 +29,6 @@ const Header = () => {
     "November",
     "December",
   ];
-  const [settingsAnchor, setSettingsAnchor] = useState(null);
-  const [calenderSelectorAnchor, setCalenderSelectorAnchor] = useState(null);
   const handleNextMonth = () => {
     const newDate = new Date(selectedDate);
 
@@ -54,20 +46,7 @@ const Header = () => {
 
     dispatch(setDate(newDate));
   };
-  const calenderSelectorMenuOpen = Boolean(calenderSelectorAnchor);
-  const handleOpenCalenderSelectorMenu = (event) => {
-    setCalenderSelectorAnchor(event.currentTarget);
-  };
-  const handleCloseCalenderSelectorMenu = () => {
-    setCalenderSelectorAnchor(null);
-  };
-  const settingsMenuOpen = Boolean(settingsAnchor);
-  const handleOpenSettingsMenu = (event) => {
-    setSettingsAnchor(event.currentTarget);
-  };
-  const handleCloseSettingsMenu = () => {
-    setSettingsAnchor(null);
-  };
+
   const handleTodayClick = () => {
     const today = new Date();
 
@@ -136,103 +115,8 @@ const Header = () => {
         <IconButton disableRipple>
           <SearchOutlinedIcon sx={{ color: "black" }} />
         </IconButton>
-        <Button
-          variant="contained"
-          onClick={(event) => {
-            return handleOpenCalenderSelectorMenu(event);
-          }}
-          disableElevation
-          disableRipple
-          size="small"
-        >
-          Month
-        </Button>
-        <Menu
-          elevation={1}
-          id="work-menu"
-          anchorEl={calenderSelectorAnchor}
-          open={calenderSelectorMenuOpen}
-          onClose={handleCloseCalenderSelectorMenu}
-          MenuListProps={{
-            "aria-labelledby": "basic-button",
-          }}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          PaperProps={{
-            elevation: 0,
-            sx: {
-              mt: 1,
-              width: "auto",
-              borderRadius: 2,
-              overflow: "visible",
-              backgroundColor: "white",
-              border: "1px solid #ccc",
-            },
-          }}
-        >
-          <MenuItem sx={{ py: 1, px: 2, fontSize: "14px" }} onClick={() => {}}>
-            Day
-          </MenuItem>
-          <MenuItem sx={{ py: 1, px: 2, fontSize: "14px" }} onClick={() => {}}>
-            Week
-          </MenuItem>
-          <MenuItem sx={{ py: 1, px: 2, fontSize: "14px" }} onClick={() => {}}>
-            Month
-          </MenuItem>
-          <MenuItem sx={{ py: 1, px: 2, fontSize: "14px" }} onClick={() => {}}>
-            Year
-          </MenuItem>
-        </Menu>
-        <IconButton
-          onClick={(event) => {
-            return handleOpenSettingsMenu(event);
-          }}
-          disableRipple
-        >
-          <SettingsOutlinedIcon sx={{ color: "black" }} />
-        </IconButton>
-        <Menu
-          elevation={1}
-          id="work-menu"
-          anchorEl={settingsAnchor}
-          open={settingsMenuOpen}
-          onClose={handleCloseSettingsMenu}
-          MenuListProps={{
-            "aria-labelledby": "basic-button",
-          }}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          PaperProps={{
-            elevation: 0,
-            sx: {
-              mt: 1,
-              width: "auto",
-              borderRadius: 2,
-              overflow: "visible",
-              backgroundColor: "white",
-              border: "1px solid #ccc",
-            },
-          }}
-        >
-          <MenuItem sx={{ py: 1, px: 2, fontSize: "14px" }} onClick={() => {}}>
-            Settings
-          </MenuItem>
-          <MenuItem sx={{ py: 1, px: 2, fontSize: "14px" }} onClick={() => {}}>
-            Trash
-          </MenuItem>
-        </Menu>
+        <ViewSelector />
+        <SettingsMenu />
         <UserAvatar username="jhon_cena" width={40} />
       </Stack>
     </Stack>

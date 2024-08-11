@@ -6,7 +6,7 @@
 /* eslint-disable multiline-ternary */
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   setHours,
   getHours,
@@ -28,11 +28,12 @@ import StatusSelector from "./StatusSelector";
 import { DateState } from "../../State/dateState";
 import RecurrenceSelector from "./RecurrenceSelector";
 import CustomDatePicker from "../Shared/CustomDatePicker";
+import OrganizerColorSelector from "./OrganizerColorSelector";
 import CustomeTimeRangePicker from "../Shared/CustomeTimeRangePicker";
 
 const EventForm = () => {
-  const dispatch = useDispatch();
   const { selectedDate } = useSelector(DateState);
+  const [organizerMenuOpen, setOrganizerMenuOpen] = useState(false);
   const [eventDetails, setEventDetails] = useState({
     title: "",
     location: "",
@@ -200,41 +201,71 @@ const EventForm = () => {
           }}
         />
       </Stack>
-      <Stack
-        gap={2}
-        direction="row"
-        justifyContent="flex-start"
-        alignItems="center"
-        sx={{ width: "100%" }}
-      >
-        <EventIcon sx={{ fontSize: "30px", color: "#00000080" }} />
+      {!organizerMenuOpen && (
         <Stack
-          direction="column"
+          gap={2}
+          direction="row"
+          justifyContent="flex-start"
+          alignItems="center"
+          sx={{ width: "100%" }}
+        >
+          <EventIcon sx={{ fontSize: "30px", color: "#00000080" }} />
+          <Stack
+            component="div"
+            direction="column"
+            justifyContent="flex-start"
+            alignItems="flex-start"
+            gap={0.5}
+            sx={{
+              py: 1,
+              px: 2,
+              width: "100%",
+              borderRadius: 3,
+              cursor: "pointer",
+              "&:hover": { backgroundColor: "#00000008" },
+            }}
+            onClick={() => {
+              setOrganizerMenuOpen(true);
+            }}
+          >
+            <Typography variant="body1" sx={{ fontSize: "14px" }}>
+              Narayana Lvsaln
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ fontSize: "12px", color: "#00000080" }}
+            >
+              Free . The day before at 11:30pm
+            </Typography>
+          </Stack>
+        </Stack>
+      )}
+      {organizerMenuOpen && (
+        <Stack
+          gap={2}
+          direction="row"
           justifyContent="flex-start"
           alignItems="flex-start"
-          gap={0.5}
-          sx={{
-            py: 1,
-            px: 2,
-            width: "100%",
-            borderRadius: 3,
-            cursor: "pointer",
-            "&:hover": { backgroundColor: "#00000008" },
-          }}
+          sx={{ width: "100%" }}
         >
-          <Typography variant="body1" sx={{ fontSize: "14px" }}>
-            Narayana Lvsaln
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ fontSize: "12px", color: "#00000080" }}
+          <EventIcon sx={{ mt: 1.5, fontSize: "30px", color: "#00000080" }} />
+          <Stack
+            component="div"
+            direction="column"
+            justifyContent="flex-start"
+            alignItems="flex-start"
+            gap={2}
+            sx={{
+              py: 1,
+              width: "100%",
+            }}
           >
-            Free . The day before at 11:30pm
-          </Typography>
+            <OrganizerColorSelector />
+            <StatusSelector />
+            <SetReminder />
+          </Stack>
         </Stack>
-      </Stack>
-      <StatusSelector />
-      <SetReminder />
+      )}
     </Stack>
   );
 };

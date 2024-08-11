@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   darwerWidth: 300,
-  currentView: "month",
+  currentView: "day",
 };
 
 export const appSlice = createSlice({

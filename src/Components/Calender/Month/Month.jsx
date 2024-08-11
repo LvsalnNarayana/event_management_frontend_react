@@ -11,7 +11,7 @@ import {
   startOfMonth,
 } from "date-fns";
 
-import Day from "./Day";
+import MonthDay from "./MonthDay";
 
 const Month = ({ selectedDate }) => {
   const startDate = startOfWeek(startOfMonth(selectedDate), {
@@ -42,7 +42,7 @@ const Month = ({ selectedDate }) => {
     >
       {days.map((date, index) => {
         return (
-          <Day
+          <MonthDay
             key={index}
             index={index}
             date={date}

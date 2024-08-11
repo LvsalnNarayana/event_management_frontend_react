@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Grid } from "@mui/material";
+import { Stack } from "@mui/material";
 
 import Calender from "./Components/Calender/Calender";
 import Header from "./Components/Shared/Header/Header";
@@ -10,14 +10,14 @@ const App = () => {
   return (
     <>
       <Header />
-      <Grid container>
-        <Grid item xs={12} sm={3} style={{ maxWidth: 300 }}>
-          <Sidebar />
-        </Grid>
-        <Grid item xs={12} sm={9}>
-          <Calender />
-        </Grid>
-      </Grid>
+      <Stack
+        direction="row"
+        justifyContent="flex-start"
+        alignItems="flex-start"
+      >
+        <Sidebar />
+        <Calender />
+      </Stack>
     </>
   );
 };
