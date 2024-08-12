@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Stack } from "@mui/material";
+import { Stack, Divider } from "@mui/material";
 
 import Calender from "./Components/Calender/Calender";
 import Header from "./Components/Shared/Header/Header";
@@ -16,6 +16,7 @@ const App = () => {
         alignItems="flex-start"
       >
         <Sidebar />
+        <Divider orientation="vertical" flexItem />
         <Calender />
       </Stack>
     </>
