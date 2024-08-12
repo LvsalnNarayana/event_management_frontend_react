@@ -159,24 +159,6 @@ const ViewSelector = () => {
             </Typography>
           </Stack>
         </MenuItem>
-        <MenuItem
-          sx={{ py: 1, px: 2, width: "100%" }}
-          onClick={() => {
-            dispatch(setCurrentView("playground"));
-            handleCloseCalenderSelectorMenu();
-          }}
-        >
-          <Stack
-            width="100%"
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography variant="body1" sx={{ fontSize: "14px" }}>
-              Playground
-            </Typography>
-          </Stack>
-        </MenuItem>
       </Menu>
     </>
   );

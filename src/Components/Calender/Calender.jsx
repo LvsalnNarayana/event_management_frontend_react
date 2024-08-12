@@ -4,9 +4,9 @@ import { useSelector } from "react-redux";
 import { Stack } from "@mui/material";
 
 import Day from "./Day/Day";
+import Year from "./Year/Year";
 import Month from "./Month/Month";
 import { AppState } from "../../State/appState";
-import Playground from "../DragTest/Playground";
 import { DateState } from "../../State/dateState";
 
 const Calender = () => {
@@ -20,7 +20,7 @@ const Calender = () => {
     >
       {currentView === "month" && <Month selectedDate={selectedDate} />}
       {currentView === "day" && <Day selectedDate={selectedDate} />}
-      {currentView === "playground" && <Playground />}
+      {currentView === "year" && <Year />}
     </Stack>
   );
 };

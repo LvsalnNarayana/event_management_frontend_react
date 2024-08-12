@@ -1,5 +1,6 @@
 /* eslint-disable max-statements */
 import React from "react";
+import { format, addDays, addMonths } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
@@ -10,41 +11,30 @@ import { Stack, Button, Typography, IconButton } from "@mui/material";
 import UserAvatar from "../UserAvatar";
 import ViewSelector from "./ViewSelector";
 import SettingsMenu from "./SettingsMenu";
+import { AppState } from "../../../State/appState";
 import { setDate, DateState } from "../../../State/dateState";
 
 const Header = () => {
   const dispatch = useDispatch();
   const { selectedDate } = useSelector(DateState);
-  const month = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  const handleNextMonth = () => {
-    const newDate = new Date(selectedDate);
+  const { currentView } = useSelector(AppState);
 
-    newDate.setMonth(selectedDate.getMonth() + 1);
-    newDate.setDate(1);
-
-    dispatch(setDate(newDate));
+  const handleNext = () => {
+    if (currentView === "month") {
+      dispatch(setDate(addMonths(selectedDate, 1).toUTCString()));
+    }
+    if (currentView === "day") {
+      dispatch(setDate(addDays(selectedDate, 1).toUTCString()));
+    }
   };
 
-  const handlePreviousMonth = () => {
-    const newDate = new Date(selectedDate);
-
-    newDate.setMonth(selectedDate.getMonth() - 1);
-    newDate.setDate(1);
-
-    dispatch(setDate(newDate));
+  const handlePrevious = () => {
+    if (currentView === "month") {
+      dispatch(setDate(addMonths(selectedDate, -1).toUTCString()));
+    }
+    if (currentView === "day") {
+      dispatch(setDate(addDays(selectedDate, -1).toUTCString()));
+    }
   };
 
   const handleTodayClick = () => {
@@ -91,18 +81,15 @@ const Header = () => {
           Today
         </Button>
         <Stack direction="row" justifyContent="flex-start" alignItems="center">
-          <IconButton
-            onClick={handlePreviousMonth}
-            sx={{ mr: 1 }}
-            disableRipple
-          >
+          <IconButton onClick={handlePrevious} sx={{ mr: 1 }} disableRipple>
             <ArrowBackIosNewIcon fontSize="small" />
           </IconButton>
-          <IconButton onClick={handleNextMonth} sx={{ mr: 2 }} disableRipple>
+          <IconButton onClick={handleNext} sx={{ mr: 2 }} disableRipple>
             <ArrowForwardIosIcon fontSize="small" />
           </IconButton>
           <Typography sx={{ fontSize: "20px" }}>
-            {month[selectedDate.getMonth()]} {selectedDate.getFullYear()}
+            {currentView === "month" && format(selectedDate, "MMMM yyyy")}
+            {currentView === "day" && format(selectedDate, " dd MMMM yyyy")}
           </Typography>
         </Stack>
       </Stack>

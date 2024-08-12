@@ -108,7 +108,9 @@ const DayEvent = ({ event }) => {
       })
     );
 
-    setResizing(false);
+    setTimeout(() => {
+      setResizing(false);
+    }, 500);
   };
 
   const handlePopoverClose = () => {
@@ -185,6 +187,18 @@ const DayEvent = ({ event }) => {
                   return setHandleActive(true);
                 }}
                 onMouseOut={(event) => {
+                  event.stopPropagation();
+                  event.preventDefault();
+
+                  return setHandleActive(false);
+                }}
+                onMouseDown={(event) => {
+                  event.stopPropagation();
+                  event.preventDefault();
+
+                  return setHandleActive(true);
+                }}
+                onMouseUp={(event) => {
                   event.stopPropagation();
                   event.preventDefault();
 
@@ -427,7 +441,8 @@ const DayEvent = ({ event }) => {
               justifyContent: "flex",
             }}
           >
-            <strong>Start Time :</strong> {format(event.startTime, "MMMM, dd, yyyy, hh:mm aa")}
+            <strong>Start Time :</strong>{" "}
+            {format(event.startTime, "MMMM, dd, yyyy, hh:mm aa")}
           </Typography>
           <Typography
             sx={{
@@ -439,7 +454,8 @@ const DayEvent = ({ event }) => {
               justifyContent: "flex",
             }}
           >
-            <strong>End Time :</strong> {format(event.endTime, "MMMM, dd, yyyy, hh:mm aa")}
+            <strong>End Time :</strong>{" "}
+            {format(event.endTime, "MMMM, dd, yyyy, hh:mm aa")}
           </Typography>
           <Typography
             sx={{

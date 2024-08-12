@@ -4,6 +4,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 import React from "react";
+import { getDate } from "date-fns";
 
 import { Stack, Divider, Typography } from "@mui/material";
 
@@ -41,7 +42,7 @@ const Day = ({ selectedDate }) => {
           }}
         >
           <Typography sx={{ color: "white", fontSize: "26px" }}>
-            {selectedDate.getDate()}
+            {getDate(selectedDate)}
           </Typography>
         </Stack>
         <Stack

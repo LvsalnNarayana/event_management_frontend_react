@@ -2,6 +2,7 @@
 /* eslint-disable no-negated-condition */
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { isEqual, startOfDay } from "date-fns";
 
 import { CloseOutlined } from "@mui/icons-material";
 import { Stack, Popover, Typography, IconButton } from "@mui/material";
@@ -24,7 +25,7 @@ const MonthDay = ({ date, index, isLeft, isTopRow, isCurrentMonth }) => {
     setEventMenuAnchor(null);
   };
   const { selectedDate } = useSelector(DateState);
-  const isSelectedDate = selectedDate.toDateString() === date.toDateString();
+  const isSelectedDate = isEqual(startOfDay(selectedDate), startOfDay(date));
   const events = [
     { id: 1, title: "Travel to somewhere" },
     { id: 2, title: "Meeting with Team" },

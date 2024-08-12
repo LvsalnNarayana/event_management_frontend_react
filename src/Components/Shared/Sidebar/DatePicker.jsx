@@ -17,7 +17,7 @@ const DatePicker = () => {
 
   return (
     <DateCalendar
-      value={selectedDate}
+      value={new Date(selectedDate.toString())}
       onChange={(event) => {
         return handleChange(event);
       }}
