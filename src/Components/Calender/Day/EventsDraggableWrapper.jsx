@@ -14,10 +14,10 @@ import {
 
 import { Stack } from "@mui/material";
 
-import DayHours from "./DayHours";
-import { updateEvent } from "../../../State/eventsSlice";
+import DayHoursLayout from "./DayHoursLayout";
+import { updateEvent } from "../../../State/eventsState";
 
-const EventsDraggableWrapper = () => {
+const EventsDraggableWrapper = ({ children }) => {
   const dispatch = useDispatch();
   const snapToGrid = useMemo(() => {
     return createSnapModifier(12);
@@ -42,13 +42,13 @@ const EventsDraggableWrapper = () => {
         onDragEnd={(event) => {
           dispatch(
             updateEvent({
-              ...event?.active?.data?.current,
+              ...event?.active?.data?.current?.event,
               endTime: addMinutes(
-                event.active.data.current.endTime,
+                event.active.data.current.event.endTime,
                 Math.round((event.delta.y * 60) / 48 / 15) * 15
               ).toUTCString(),
               startTime: addMinutes(
-                event.active.data.current.startTime,
+                event.active.data.current.event.startTime,
                 Math.round((event.delta.y * 60) / 48 / 15) * 15
               ).toUTCString(),
             })
@@ -61,7 +61,7 @@ const EventsDraggableWrapper = () => {
         ]}
         sensors={sensors}
       >
-        <DayHours />
+        <DayHoursLayout>{children}</DayHoursLayout>
       </DndContext>
     </Stack>
   );

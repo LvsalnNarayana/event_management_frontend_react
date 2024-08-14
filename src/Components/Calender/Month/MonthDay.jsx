@@ -44,6 +44,8 @@ const MonthDay = ({ date, index, isLeft, isTopRow, isCurrentMonth }) => {
       alignItems="flex-start"
       sx={{
         p: 0.5,
+        width: "100%",
+        height: "100%",
         overflow: "hidden",
         borderRight: "1px solid #dadce0",
         borderBottom: "1px solid #dadce0",

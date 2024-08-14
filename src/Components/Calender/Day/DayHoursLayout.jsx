@@ -1,31 +1,30 @@
+/* eslint-disable max-statements */
 /* eslint-disable operator-linebreak */
-import { useSelector } from "react-redux";
+import { setHours, setMinutes } from "date-fns";
 /* eslint-disable react/no-array-index-key */
 import React, { useRef, useEffect } from "react";
-import { getDate, getYear, getMonth } from "date-fns";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Stack, Divider, Typography } from "@mui/material";
 
-import DayEvent from "./DayEvent";
 import useData from "../../../Data/useData";
 import { DateState } from "../../../State/dateState";
-import { selectEvents } from "../../../State/eventsSlice";
+import { addEvent } from "../../../State/eventsState";
 
-const DayHours = () => {
+const DayHoursLayout = ({ children }) => {
   const { hours } = useData();
   const containerRef = useRef(null);
+  const dispatch = useDispatch();
   const { selectedDate } = useSelector(DateState);
 
   const nineAmRef = useRef(null);
-
-  const events = useSelector(selectEvents);
 
   useEffect(() => {
     if (containerRef.current && nineAmRef.current) {
       containerRef.current.scrollTop =
         nineAmRef.current.offsetTop - containerRef.current.offsetTop + 5;
     }
-  }, []);
+  }, [selectedDate]);
 
   return (
     <Stack
@@ -35,7 +34,7 @@ const DayHours = () => {
         pr: 3,
         overflowY: "auto",
         position: "relative",
-        height: "calc(100vh - 136px)",
+        height: "calc(100vh - 137px)",
       }}
     >
       {hours.map((hour, index) => {
@@ -45,6 +44,45 @@ const DayHours = () => {
           <Stack
             key={index}
             gap={0}
+            component="div"
+            onClick={(event) => {
+              const target = event.currentTarget;
+              const rect = target.getBoundingClientRect();
+              const yPosition = event.clientY - rect.top;
+
+              let hourInt = parseInt(hour.split(" ")[0], 10);
+
+              if (hour.split(" ")[1].toLowerCase() === "pm") {
+                hourInt += 12;
+              }
+
+              let startMinutes = 0;
+
+              if (yPosition < 12) {
+                startMinutes = 0;
+              } else if (yPosition < 24) {
+                startMinutes = 15;
+              } else if (yPosition < 36) {
+                startMinutes = 30;
+              } else if (yPosition < 48) {
+                startMinutes = 45;
+              }
+
+              dispatch(
+                addEvent({
+                  title: "",
+                  description: "",
+                  endTime: setMinutes(
+                    setHours(selectedDate, hourInt),
+                    startMinutes,
+                  ).toUTCString(),
+                  startTime: setMinutes(
+                    setHours(selectedDate, hourInt - 1),
+                    startMinutes,
+                  ).toUTCString(),
+                }),
+              );
+            }}
             direction="row"
             justifyContent="flex-start"
             alignItems="flex-end"
@@ -74,19 +112,9 @@ const DayHours = () => {
           </Stack>
         );
       })}
-      {events
-        ?.filter((event) => {
-          return (
-            getMonth(event.startTime) === getMonth(selectedDate) &&
-            getDate(event.startTime) === getDate(selectedDate) &&
-            getYear(event.startTime) === getYear(selectedDate)
-          );
-        })
-        ?.map((event, index) => {
-          return <DayEvent key={index} event={event} />;
-        })}
+      <>{children}</>
     </Stack>
   );
 };
 
-export default DayHours;
+export default DayHoursLayout;

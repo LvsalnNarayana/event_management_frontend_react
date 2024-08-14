@@ -11,6 +11,8 @@ import {
   startOfMonth,
 } from "date-fns";
 
+import { Stack } from "@mui/material";
+
 import MonthDay from "./MonthDay";
 
 const Month = ({ selectedDate }) => {
@@ -27,32 +29,38 @@ const Month = ({ selectedDate }) => {
   }
 
   return (
-    <section
-      className="content"
-      style={{
-        gridGap: "0px",
-        display: "grid",
-        backgroundColor: "#fff",
-        padding: " 0px 7px 7px 0px",
-        width: "calc(100vw - 300px)",
-        height: "calc(100vh - 60px)",
-        gridTemplateColumns: "repeat(7, 1fr)",
-        gridTemplateRows: `repeat(${days.length > 35 ? 6 : 5}, 1fr)`,
-      }}
+    <Stack
+      dierction="row"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ p: 1, width: "calc(100vw - 301px)", height: "calc(100vh - 60px)" }}
     >
-      {days.map((date, index) => {
-        return (
-          <MonthDay
-            key={index}
-            index={index}
-            date={date}
-            isTopRow={index < 7}
-            isLeft={index % 7 === 0}
-            isCurrentMonth={format(date, "MM") === format(selectedDate, "MM")}
-          />
-        );
-      })}
-    </section>
+      <section
+        className="content"
+        style={{
+          width: "100%",
+          gridGap: "0px",
+          height: "100%",
+          display: "grid",
+          backgroundColor: "#fff",
+          gridTemplateColumns: "repeat(7, 1fr)",
+          gridTemplateRows: `repeat(${days.length > 35 ? 6 : 5}, 1fr)`,
+        }}
+      >
+        {days.map((date, index) => {
+          return (
+            <MonthDay
+              key={index}
+              index={index}
+              date={date}
+              isTopRow={index < 7}
+              isLeft={index % 7 === 0}
+              isCurrentMonth={format(date, "MM") === format(selectedDate, "MM")}
+            />
+          );
+        })}
+      </section>
+    </Stack>
   );
 };
 

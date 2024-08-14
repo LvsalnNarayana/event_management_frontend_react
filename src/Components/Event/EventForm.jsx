@@ -6,14 +6,8 @@
 /* eslint-disable multiline-ternary */
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import {
-  setHours,
-  getHours,
-  setSeconds,
-  setMinutes,
-  getMinutes,
-} from "date-fns";
+import { useDispatch, useSelector } from "react-redux";
+import { setHours, setSeconds, setMinutes } from "date-fns";
 
 import EventIcon from "@mui/icons-material/Event";
 import RepeatIcon from "@mui/icons-material/Repeat";
@@ -30,9 +24,17 @@ import RecurrenceSelector from "./RecurrenceSelector";
 import CustomDatePicker from "../Shared/CustomDatePicker";
 import OrganizerColorSelector from "./OrganizerColorSelector";
 import CustomeTimeRangePicker from "../Shared/CustomeTimeRangePicker";
+import {
+  setTitle,
+  setEndTime,
+  selectEvent,
+  setStartTime,
+} from "../../State/createEventState";
 
 const EventForm = () => {
+  const dispatch = useDispatch();
   const { selectedDate } = useSelector(DateState);
+  const event = useSelector(selectEvent);
   const [organizerMenuOpen, setOrganizerMenuOpen] = useState(false);
   const [eventDetails, setEventDetails] = useState({
     title: "",
@@ -49,53 +51,12 @@ const EventForm = () => {
     ).toUTCString(),
   });
 
-  const handleTimeChange = (value, type) => {
-    setEventDetails((prevDetails) => {
-      const currentDateTime =
-        type === "start" ? prevDetails.startDateTime : prevDetails.endDateTime;
-
-      const updatedDateTime = setSeconds(
-        setMinutes(setHours(currentDateTime, value.hour), value.minutes),
-        0
-      ).toUTCString();
-
-      return {
-        ...prevDetails,
-        [`${type}DateTime`]: updatedDateTime,
-      };
-    });
-  };
-
-  const handleDateChange = (newDate) => {
-    if (newDate) {
-      setEventDetails((prevDetails) => {
-        return {
-          ...prevDetails,
-          endDateTime: setSeconds(
-            setMinutes(
-              setHours(newDate, getHours(prevDetails.endDateTime)),
-              getMinutes(prevDetails.endDateTime)
-            ),
-            0
-          ).toUTCString(),
-          startDateTime: setSeconds(
-            setMinutes(
-              setHours(newDate, getHours(prevDetails.startDateTime)),
-              getMinutes(prevDetails.startDateTime)
-            ),
-            0
-          ).toUTCString(),
-        };
-      });
-    }
-  };
-
   return (
-    <Stack gap={2} sx={{ width: "100%" }}>
+    <Stack gap={2} sx={{ p:2,width: "100%" }}>
       <TextField
         type="text"
         onChange={(e) => {
-          return setEventDetails({ ...eventDetails, title: e.target.value });
+          dispatch(setTitle(e.target.value));
         }}
         id="event_title_input"
         placeholder="Add title and time"
@@ -103,7 +64,7 @@ const EventForm = () => {
         fullWidth
         margin="normal"
         size="small"
-        value={eventDetails.title}
+        value={event.title}
         sx={{
           p: 0.2,
           my: 0.5,
@@ -115,19 +76,33 @@ const EventForm = () => {
       <CustomDatePicker
         id="event_date_input"
         format="dd MMMM yyyy, EEEE"
-        value={new Date(selectedDate)}
+        value={new Date(event.startTime)}
         changeValue={(value) => {
-          handleDateChange(value);
+          dispatch(setStartTime(value.toUTCString()));
         }}
       />
       <CustomeTimeRangePicker
-        startDate={eventDetails.startDateTime}
-        endDate={eventDetails.endDateTime}
+        startDate={event.startTime}
+        endDate={event.endTime}
         changeStartTime={(value) => {
-          handleTimeChange(value, "start");
+          dispatch(
+            setStartTime(
+              setMinutes(
+                setHours(event.startTime, value.hour),
+                value.minutes
+              ).toUTCString()
+            )
+          );
         }}
         changeEndTime={(value) => {
-          handleTimeChange(value, "end");
+          dispatch(
+            setEndTime(
+              setMinutes(
+                setHours(event.endTime, value.hour),
+                value.minutes
+              ).toUTCString()
+            )
+          );
         }}
       />
       <Stack
@@ -142,6 +117,9 @@ const EventForm = () => {
           id="event_recurrence_selector"
           value="daily"
           date={eventDetails.startDateTime}
+          changeValue={(value) => {
+            console.log(value);
+          }}
         />
       </Stack>
       <Stack

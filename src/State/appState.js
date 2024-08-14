@@ -4,7 +4,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   darwerWidth: 300,
-  currentView: "year",
+  currentView: "event",
+  pixelToTime: 60 / 48,
+  timeToPixel: 48 / 60,
 };
 
 export const appSlice = createSlice({

@@ -2,7 +2,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-import { Stack } from "@mui/material";
+import { Stack, Button } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 import DatePicker from "./DatePicker";
 import { AppState } from "../../../State/appState";
@@ -18,6 +19,21 @@ const Sidebar = () => {
       width="100%"
       maxWidth={darwerWidth}
     >
+      <Button
+        disableElevation
+        variant="contained"
+        sx={{
+          my: 2,
+          mx: "auto",
+          width: "90%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <AddIcon />
+        &nbsp;Create
+      </Button>
       <DatePicker />
     </Stack>
   );

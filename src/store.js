@@ -4,17 +4,19 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import { appSlice } from "./State/appState";
 import { dateSlice } from "./State/dateState";
-import { eventsSlice } from "./State/eventsSlice";
+import { eventsState } from "./State/eventsState";
+import { createEventSlice } from "./State/createEventState";
 
 export const store = configureStore({
-  reducer: {
-    app: appSlice.reducer,
-    date: dateSlice.reducer,
-    events: eventsSlice.reducer,
-  },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware({
       serializableCheck: false,
     });
+  },
+  reducer: {
+    app: appSlice.reducer,
+    date: dateSlice.reducer,
+    events: eventsState.reducer,
+    event: createEventSlice.reducer,
   },
 });

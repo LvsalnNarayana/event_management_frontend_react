@@ -1,3 +1,6 @@
+/* eslint-disable prefer-named-capture-group */
+/* eslint-disable require-unicode-regexp */
+/* eslint-disable max-statements */
 const timeStringGenerator = (date) => {
   const value = {
     hour: new Date(date).getHours(),
@@ -13,5 +16,34 @@ const timeStringGenerator = (date) => {
 
   return value;
 };
+const parseTimeString = (timeString) => {
+  // Regular expression to extract hour and minutes
+  const timeRegex = /(\d{1,2}):?(\d{1,2})?/;
+  const match = timeRegex.exec(timeString);
 
-export default timeStringGenerator;
+  if (!match) {
+    throw new Error("Invalid time format. Expected format: hh:mm or hh.");
+  }
+
+  // Parse hour and minutes, defaulting minutes to 0 if not provided
+  const hour = parseInt(match[1], 10);
+  const minutes = match[2] ? parseInt(match[2], 10) : 0;
+
+  // Ensure the hour and minutes are within valid ranges
+  if (hour < 0 || hour > 23 || minutes < 0 || minutes > 59) {
+    throw new Error("Invalid time values. Hour must be 0-23 and minutes 0-59.");
+  }
+
+  // Format the hour and minutes with leading zeros if necessary
+  const formattedHour = hour.toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+
+  // Return the parsed object
+  return {
+    hour,
+    minutes,
+    value: `${formattedHour}:${formattedMinutes}`,
+  };
+};
+
+export { timeStringGenerator, parseTimeString };

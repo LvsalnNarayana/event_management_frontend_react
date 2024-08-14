@@ -3,7 +3,7 @@ import React from "react";
 import { Stack } from "@mui/material";
 
 import TimeSelector from "../Event/TimeSelector";
-import timeStringGenerator from "../../Utils/timeStringGenerator";
+import { timeStringGenerator } from "../../Utils/timeStringGenerator";
 
 const CustomeTimeRangePicker = ({
   endDate,

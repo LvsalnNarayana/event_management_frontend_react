@@ -1,3 +1,5 @@
+/* eslint-disable operator-linebreak */
+/* eslint-disable no-undefined */
 /* eslint-disable no-use-before-define */
 /* eslint-disable max-lines */
 import * as React from "react";
@@ -5,6 +7,7 @@ import * as React from "react";
 import { Stack, TextField, Typography, Autocomplete } from "@mui/material/";
 
 import generateTimeSlots from "../../Utils/generateTimeSlots";
+import { parseTimeString } from "../../Utils/timeStringGenerator";
 
 const TimeSelector = ({ id, value, changeValue }) => {
   const timeSlots = generateTimeSlots();
@@ -12,29 +15,35 @@ const TimeSelector = ({ id, value, changeValue }) => {
   return (
     <Autocomplete
       id={id}
+      freeSolo
       sx={{ width: "100%" }}
       size="small"
       disableClearable
-      includeInputInList
+      // includeInputInList
       disablePortal
-      value={value}
-      options={timeSlots}
+      value={value.value}
+      options={timeSlots.map((slot) => {
+        return slot.value;
+      })}
       autoHighlight
-      getOptionLabel={(option) => {
-        return option.value.trim();
-      }}
-      isOptionEqualToValue={(option, testValue) => {
-        return option.value === testValue.value;
+      onInput={(event) => {
+        if (
+          event.target.value !== "" &&
+          event.target.value !== null &&
+          event.target.value !== undefined
+        ) {
+          changeValue(parseTimeString(event.target.value));
+        }
       }}
       onChange={(event, newValue) => {
         if (newValue) {
-          changeValue(newValue);
+          changeValue(parseTimeString(newValue));
         }
       }}
       renderOption={({ key, ...props }, option) => {
         return (
           <Typography key={key} sx={{ fontSize: "14px" }} {...props}>
-            {option.value}
+            {option}
           </Typography>
         );
       }}

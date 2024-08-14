@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 /* eslint-disable max-statements */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable comma-dangle */
@@ -6,6 +7,7 @@
 /* eslint-disable no-negated-condition */
 /* eslint-disable react/no-array-index-key */
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   format,
   addDays,
@@ -27,7 +29,11 @@ import {
   IconButton,
 } from "@mui/material";
 
+import { setDate, DateState } from "../../../State/dateState";
+
 const YearMonthLayout = ({ generatorDate }) => {
+  const dispatch = useDispatch();
+  const { selectedDate } = useSelector(DateState);
   const [popoverDate, setPopoverDate] = useState(null);
   const [eventsListAnchor, setEventsListAnchor] = useState(null);
   const eventsListOpen = Boolean(eventsListAnchor);
@@ -68,14 +74,14 @@ const YearMonthLayout = ({ generatorDate }) => {
     );
   });
 
-  const handleClick = (event, date) => {
+  const handleEventListPopupOpen = (event, date) => {
     if (format(date, "MM") === format(generatorDate, "MM")) {
       setEventsListAnchor(event.currentTarget);
       setPopoverDate(date);
     }
   };
 
-  const handleClose = () => {
+  const handleEventListPopupClose = () => {
     setEventsListAnchor(null);
     setPopoverDate(null);
   };
@@ -109,30 +115,43 @@ const YearMonthLayout = ({ generatorDate }) => {
         }}
       >
         {days.map((date) => {
+          const isToday = isEqual(startOfDay(new Date()), startOfDay(date));
+          const isSelected = isEqual(
+            startOfDay(selectedDate),
+            startOfDay(date)
+          );
+          const isCurrentMonth =
+            format(date, "MM") === format(generatorDate, "MM");
+
           return (
             <Stack
               component="div"
               key={date.toISOString()}
-              onClick={(event) => {
-                return handleClick(event, date);
+              onClick={() => {
+                if (isCurrentMonth) {
+                  dispatch(setDate(date));
+                }
+              }}
+              onContextMenu={(event) => {
+                if (isCurrentMonth) {
+                  handleEventListPopupOpen(event, date);
+                }
+                event.preventDefault();
               }}
               sx={{
                 width: "30px",
                 height: "30px",
                 borderRadius: "100%",
+                cursor: isCurrentMonth ? "pointer" : "not-allowed",
                 "&:hover": {
+                  color: "black !important",
                   backgroundColor: "#00000020",
                 },
-                cursor:
-                  format(date, "MM") === format(generatorDate, "MM")
-                    ? "pointer"
-                    : "not-allowed",
-                backgroundColor: isEqual(
-                  startOfDay(new Date()),
-                  startOfDay(date)
-                )
+                backgroundColor: isToday
                   ? "#bde0fe"
-                  : "none",
+                  : isSelected
+                    ? "#1434A4"
+                    : "transparent",
               }}
               direction="row"
               justifyContent="center"
@@ -142,8 +161,9 @@ const YearMonthLayout = ({ generatorDate }) => {
               <Typography
                 sx={{
                   fontSize: "12px",
-                  color:
-                    format(date, "MM") === format(generatorDate, "MM")
+                  color: isSelected
+                    ? "#fff"
+                    : isCurrentMonth
                       ? "black"
                       : "#00000040",
                 }}
@@ -160,7 +180,7 @@ const YearMonthLayout = ({ generatorDate }) => {
         TransitionProps={{ direction: "up" }}
         open={eventsListOpen}
         anchorEl={eventsListAnchor}
-        onClose={handleClose}
+        onClose={handleEventListPopupClose}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -195,12 +215,12 @@ const YearMonthLayout = ({ generatorDate }) => {
             >
               <Typography
                 variant="body1"
-                sx={{ fontSize: "16px", textTransform: "uppercase" }}
+                sx={{ fontSize: "16px", textTransform: "capitalize" }}
               >
-                {format(popoverDate, "EEEE")}
+                {format(popoverDate, "E")}
               </Typography>
-              <IconButton onClick={handleClose}>
-                <CloseOutlinedIcon />
+              <IconButton onClick={handleEventListPopupClose}>
+                <CloseOutlinedIcon fontSize="small" />
               </IconButton>
             </Stack>
             <Typography
@@ -218,6 +238,12 @@ const YearMonthLayout = ({ generatorDate }) => {
               }}
             >
               {format(popoverDate, "d")}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ fontSize: "14px", textTransform: "capitalize" }}
+            >
+              {format(popoverDate, "MMMM")}
             </Typography>
           </Stack>
         )}

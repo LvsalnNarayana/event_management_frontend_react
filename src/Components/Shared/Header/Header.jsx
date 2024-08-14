@@ -1,7 +1,7 @@
 /* eslint-disable max-statements */
 import React from "react";
-import { format, addDays, addMonths } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
+import { format, addDays, addYears, addMonths } from "date-fns";
 
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -26,6 +26,9 @@ const Header = () => {
     if (currentView === "day") {
       dispatch(setDate(addDays(selectedDate, 1).toUTCString()));
     }
+    if (currentView === "year") {
+      dispatch(setDate(addYears(selectedDate, 1).toUTCString()));
+    }
   };
 
   const handlePrevious = () => {
@@ -34,6 +37,9 @@ const Header = () => {
     }
     if (currentView === "day") {
       dispatch(setDate(addDays(selectedDate, -1).toUTCString()));
+    }
+    if (currentView === "year") {
+      dispatch(setDate(addYears(selectedDate, -1).toUTCString()));
     }
   };
 
@@ -89,7 +95,8 @@ const Header = () => {
           </IconButton>
           <Typography sx={{ fontSize: "20px" }}>
             {currentView === "month" && format(selectedDate, "MMMM yyyy")}
-            {currentView === "day" && format(selectedDate, " dd MMMM yyyy")}
+            {currentView === "day" && format(selectedDate, "dd MMMM yyyy")}
+            {currentView === "year" && format(selectedDate, "yyyy")}
           </Typography>
         </Stack>
       </Stack>

@@ -1,16 +1,22 @@
+/* eslint-disable operator-linebreak */
 /* eslint-disable comma-dangle */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable import/no-extraneous-dependencies */
 
 import React from "react";
-import { getDate } from "date-fns";
+import { useSelector } from "react-redux";
+import { getDate, getYear, getMonth } from "date-fns";
 
 import { Stack, Divider, Typography } from "@mui/material";
 
+import Event from "../Event/Event";
+import { selectEvents } from "../../../State/eventsState";
 import EventsDraggableWrapper from "./EventsDraggableWrapper";
 
 const Day = ({ selectedDate }) => {
+  const events = useSelector(selectEvents);
+
   return (
     <>
       <Stack
@@ -20,6 +26,7 @@ const Day = ({ selectedDate }) => {
         width="100%"
         sx={{
           pt: 1,
+          px: 2,
           top: 0,
           zIndex: 1000,
           height: "100%",
@@ -62,12 +69,24 @@ const Day = ({ selectedDate }) => {
               color: "#00000080",
             }}
           >
-            GMT 5:30+
+            GMT+5:30
           </Typography>
           <Divider sx={{ flexGrow: 1 }} />
         </Stack>
       </Stack>
-      <EventsDraggableWrapper />
+      <EventsDraggableWrapper>
+        {events
+          ?.filter((event) => {
+            return (
+              getMonth(event.startTime) === getMonth(selectedDate) &&
+              getDate(event.startTime) === getDate(selectedDate) &&
+              getYear(event.startTime) === getYear(selectedDate)
+            );
+          })
+          ?.map((event, index) => {
+            return <Event key={index} event={event} eventType="day" />;
+          })}
+      </EventsDraggableWrapper>
     </>
   );
 };

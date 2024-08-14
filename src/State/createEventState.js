@@ -118,16 +118,16 @@ const initialState = {
   title: "",
   guests: [],
   status: "0",
-  endTime: "",
   seriesId: "",
   guestCount: 0,
-  startTime: "",
   categories: [],
   timezone: "utc",
   description: "",
   attachments: [],
   visibility: "public",
   eventColor: "#FF5733",
+  endTime: new Date().toUTCString(),
+  startTime: new Date().toUTCString(),
   recurrence: {
     until: "",
     interval: 0,
@@ -172,7 +172,7 @@ export const createEventSlice = createSlice({
     },
     // Set the title of the event
     setTitle: (state, action) => {
-      state.title = action.payload;
+      state.title += action.payload;
     },
     // Set event status
     setStatus: (state, action) => {

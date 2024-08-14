@@ -38,7 +38,7 @@ import {
   IconButton,
 } from "@mui/material";
 
-import { updateEvent } from "../../../State/eventsSlice";
+import { updateEvent } from "../../../State/eventsState";
 
 const DayEvent = ({ event }) => {
   const resizeRef = useRef(null);
