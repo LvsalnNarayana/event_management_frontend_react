@@ -12,7 +12,7 @@ import { Select, MenuItem, Typography } from "@mui/material";
 import CustomRecurrenceForm from "./CustomRecurrenceForm";
 
 const RecurrenceSelector = ({ id, date, value, changeValue }) => {
-  const [recurrenceDialogOpen, setRecurrenceDialogOpen] = useState(true);
+  const [recurrenceDialogOpen, setRecurrenceDialogOpen] = useState(false);
   const getOrdinalDayOfMonth = (givenDate) => {
     const year = new Date(givenDate).getFullYear();
     const month = new Date(givenDate).getMonth();

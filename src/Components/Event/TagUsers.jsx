@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable import/no-duplicates */
 import React, { useMemo, useState } from "react";
 /* eslint-disable max-lines */
@@ -12,7 +13,7 @@ import {
 
 import UserAvatar from "../Shared/UserAvatar";
 
-const TagUsers = () => {
+const TagUsers = ({ addGuest }) => {
   const [selectedFriends, setSelectedFriends] = useState([]);
   const friends = useMemo(() => {
     return [
@@ -212,7 +213,8 @@ const TagUsers = () => {
       blurOnSelect
       value={selectedFriends || []}
       onChange={(event, newValue) => {
-        setSelectedFriends(newValue);
+        // setSelectedFriends(newValue);
+        addGuest(newValue[0]);
       }}
       getOptionLabel={(option) => {
         return option?.username;

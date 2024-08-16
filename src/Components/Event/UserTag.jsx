@@ -13,6 +13,7 @@ const UserTag = ({ user }) => {
       justifyContent="space-between"
       alignItems="center"
       width="100%"
+      sx={{ px: 1 }}
     >
       <Stack
         gap={1}

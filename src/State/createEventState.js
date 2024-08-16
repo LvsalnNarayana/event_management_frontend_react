@@ -120,22 +120,20 @@ const initialState = {
   status: "0",
   seriesId: "",
   guestCount: 0,
-  categories: [],
+  reminders: [],
   timezone: "utc",
   description: "",
   attachments: [],
   visibility: "public",
   eventColor: "#FF5733",
-  endTime: new Date().toUTCString(),
-  startTime: new Date().toUTCString(),
-  recurrence: {
-    until: "",
-    interval: 0,
-    frequency: "",
-    daysOfWeek: [],
+  endTime: new Date("2024", "08", "16", "10", "00"),
+  startTime: new Date("2024", "08", "16", "09", "00"),
+  permissions: {
+    modify: false,
+    invite: false,
+    seeGuests: false,
   },
   location: {
-    room: "Conference Room B",
     address: "123 Main St, Anytown, USA",
     coordinates: {
       latitude: 40.712776,
@@ -149,10 +147,18 @@ const initialState = {
     username: "",
     lastname: "",
     firstname: "",
-    reminders: [],
     settings: {
       status: "active",
-      notifications: [],
+    },
+  },
+  recurrence: {
+    frequency: 2,
+    daysOfWeek: [],
+    interval: "month",
+    until: new Date("2024", "12", "31"),
+    monthlyOn: {
+      value: "1",
+      type: "day",
     },
   },
 };
@@ -172,7 +178,7 @@ export const createEventSlice = createSlice({
     },
     // Set the title of the event
     setTitle: (state, action) => {
-      state.title += action.payload;
+      state.title = action.payload;
     },
     // Set event status
     setStatus: (state, action) => {

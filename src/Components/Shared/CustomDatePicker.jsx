@@ -3,9 +3,10 @@ import React from "react";
 
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-const CustomDatePicker = ({ id, value, format, changeValue }) => {
+const CustomDatePicker = ({ id, value, format, disabled, changeValue }) => {
   return (
     <DatePicker
+      disabled={disabled || false}
       format={format || "dd MMMM yyyy, EEEE"}
       value={value}
       onChange={(newDate) => {
