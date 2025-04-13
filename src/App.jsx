@@ -1,25 +1,24 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { Route, Routes, Navigate } from "react-router-dom";
 
-import { Stack, Divider } from "@mui/material";
-
-import Calender from "./Components/Calender/Calender";
-import Header from "./Components/Shared/Header/Header";
-import Sidebar from "./Components/Shared/Sidebar/Sidebar";
+import Calendar from "./pages/Calendar";
+import MainLayout from "./layouts/MainLayout";
+import { DateState } from "./State/dateState";
+import generateDateUrl from "./Utils/generateDateUrl";
 
 const App = () => {
+  const { selectedDate } = useSelector(DateState);
+  const redirectToDate = generateDateUrl(new Date(selectedDate.toString()));
+
   return (
-    <>
-      <Header />
-      <Stack
-        direction="row"
-        justifyContent="flex-start"
-        alignItems="flex-start"
-      >
-        <Sidebar />
-        <Divider orientation="vertical" flexItem />
-        <Calender />
-      </Stack>
-    </>
+    <Routes>
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<Navigate replace to={redirectToDate} />} />
+        <Route path=":year/:month/:day" element={<Calendar />} />
+      </Route>
+      <Route path="*" element={<>not found</>} />
+    </Routes>
   );
 };
 

@@ -11,14 +11,14 @@ export const dateSlice = createSlice({
   name: "date",
   initialState,
   reducers: {
-    setDate: (state, action) => {
+    setSelectedDate: (state, action) => {
       state.selectedDate = action.payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setDate } = dateSlice.actions;
+export const { setSelectedDate } = dateSlice.actions;
 export const DateState = (state) => {
   return state.date;
 };

@@ -3,6 +3,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { format, addDays, addYears, addMonths } from "date-fns";
 
+import MenuIcon from "@mui/icons-material/Menu";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
@@ -12,7 +13,7 @@ import UserAvatar from "../UserAvatar";
 import ViewSelector from "./ViewSelector";
 import SettingsMenu from "./SettingsMenu";
 import { AppState } from "../../../State/appState";
-import { setDate, DateState } from "../../../State/dateState";
+import { DateState, setSelectedDate } from "../../../State/dateState";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -21,32 +22,32 @@ const Header = () => {
 
   const handleNext = () => {
     if (currentView === "month") {
-      dispatch(setDate(addMonths(selectedDate, 1).toUTCString()));
+      dispatch(setSelectedDate(addMonths(selectedDate, 1).toUTCString()));
     }
     if (currentView === "day") {
-      dispatch(setDate(addDays(selectedDate, 1).toUTCString()));
+      dispatch(setSelectedDate(addDays(selectedDate, 1).toUTCString()));
     }
     if (currentView === "year") {
-      dispatch(setDate(addYears(selectedDate, 1).toUTCString()));
+      dispatch(setSelectedDate(addYears(selectedDate, 1).toUTCString()));
     }
   };
 
   const handlePrevious = () => {
     if (currentView === "month") {
-      dispatch(setDate(addMonths(selectedDate, -1).toUTCString()));
+      dispatch(setSelectedDate(addMonths(selectedDate, -1).toUTCString()));
     }
     if (currentView === "day") {
-      dispatch(setDate(addDays(selectedDate, -1).toUTCString()));
+      dispatch(setSelectedDate(addDays(selectedDate, -1).toUTCString()));
     }
     if (currentView === "year") {
-      dispatch(setDate(addYears(selectedDate, -1).toUTCString()));
+      dispatch(setSelectedDate(addYears(selectedDate, -1).toUTCString()));
     }
   };
 
   const handleTodayClick = () => {
     const today = new Date();
 
-    dispatch(setDate(today));
+    dispatch(setSelectedDate(today));
   };
 
   return (
@@ -67,16 +68,22 @@ const Header = () => {
         justifyContent="flex-start"
         alignItems="center"
       >
-        <Typography
-          sx={{
-            width: "265px",
-            fontWeight: 600,
-            fontSize: "24px",
-            fontFamily: "IBM Plex Mono",
-          }}
-        >
-          Eventr
-        </Typography>
+        <Stack direction="row" gap={1} alignItems="center">
+          <IconButton disableRipple>
+            <MenuIcon sx={{ color: "black" }} />
+          </IconButton>
+          <Typography
+            sx={{
+              width: "265px",
+              fontWeight: 600,
+              fontSize: "24px",
+              fontFamily: "IBM Plex Mono",
+            }}
+          >
+            Eventr
+          </Typography>
+        </Stack>
+
         <Button
           onClick={handleTodayClick}
           variant="contained"

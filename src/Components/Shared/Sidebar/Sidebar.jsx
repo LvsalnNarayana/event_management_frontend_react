@@ -20,6 +20,7 @@ const Sidebar = () => {
       maxWidth={darwerWidth}
     >
       <Button
+        size="small"
         disableElevation
         variant="contained"
         sx={{

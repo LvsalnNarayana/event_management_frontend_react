@@ -25,13 +25,7 @@ const Day = ({ selectedDate }) => {
         alignItems="flex-start"
         width="100%"
         sx={{
-          pt: 1,
-          px: 2,
-          top: 0,
           zIndex: 1000,
-          height: "100%",
-          position: "sticky",
-          backgroundColor: "white",
         }}
       >
         <Stack
@@ -41,7 +35,7 @@ const Day = ({ selectedDate }) => {
           flexShrink={0}
           sx={{
             mb: 1,
-            ml: 11,
+            ml: 10,
             width: "50px",
             height: "50px",
             borderRadius: "100%",

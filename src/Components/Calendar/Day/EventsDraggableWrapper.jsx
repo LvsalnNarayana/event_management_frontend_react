@@ -1,24 +1,18 @@
-/* eslint-disable comma-dangle */
-/* eslint-disable prettier/prettier */
-/* eslint-disable no-console */
-import { addMinutes } from "date-fns";
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable operator-linebreak */
+/* eslint-disable max-statements */
 import React, { useMemo } from "react";
-import { useDispatch } from "react-redux";
 import { useSensor, useSensors, DndContext, MouseSensor } from "@dnd-kit/core";
 import {
   createSnapModifier,
   restrictToVerticalAxis,
-  restrictToParentElement,
+  restrictToFirstScrollableAncestor,
 } from "@dnd-kit/modifiers";
 
 import { Stack } from "@mui/material";
 
 import DayHoursLayout from "./DayHoursLayout";
-import { updateEvent } from "../../../State/eventsState";
 
 const EventsDraggableWrapper = ({ children }) => {
-  const dispatch = useDispatch();
   const snapToGrid = useMemo(() => {
     return createSnapModifier(12);
   }, []);
@@ -33,30 +27,25 @@ const EventsDraggableWrapper = ({ children }) => {
     <Stack
       component="div"
       width="100%"
+      flexGrow={1}
+      height="100%  "
+      maxHeight="100%"
       direction="column"
       justifyContent="flex-start"
       alignItems="flex-start"
-      sx={{ position: "relative" }}
+      sx={{
+        overflowX: "hidden",
+        position: "relative",
+      }}
     >
       <DndContext
-        onDragEnd={(event) => {
-          dispatch(
-            updateEvent({
-              ...event?.active?.data?.current?.event,
-              endTime: addMinutes(
-                event.active.data.current.event.endTime,
-                Math.round((event.delta.y * 60) / 48 / 15) * 15
-              ).toUTCString(),
-              startTime: addMinutes(
-                event.active.data.current.event.startTime,
-                Math.round((event.delta.y * 60) / 48 / 15) * 15
-              ).toUTCString(),
-            })
-          );
+        autoScroll={{
+          acceleration: 2,
+          layoutShiftCompensation: true,
         }}
         modifiers={[
           snapToGrid,
-          restrictToParentElement,
+          restrictToFirstScrollableAncestor,
           restrictToVerticalAxis,
         ]}
         sensors={sensors}

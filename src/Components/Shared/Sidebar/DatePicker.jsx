@@ -5,14 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { DateCalendar } from "@mui/x-date-pickers";
 
-import { setDate, DateState } from "../../../State/dateState";
+import { DateState, setSelectedDate } from "../../../State/dateState";
 
 const DatePicker = () => {
   const dispatch = useDispatch();
   const { selectedDate } = useSelector(DateState);
 
   const handleChange = (event) => {
-    dispatch(setDate(event));
+    dispatch(setSelectedDate(event));
   };
 
   return (

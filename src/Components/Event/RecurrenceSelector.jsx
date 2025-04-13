@@ -7,9 +7,10 @@
 import React, { useState } from "react";
 import { getDay, format, startOfMonth, eachDayOfInterval } from "date-fns";
 
-import { Select, MenuItem, Typography } from "@mui/material";
+import RepeatIcon from "@mui/icons-material/Repeat";
 
 import CustomRecurrenceForm from "./CustomRecurrenceForm";
+import CustomSelectInput from "../Shared/inputs/CustomSelectInput";
 
 const RecurrenceSelector = ({ id, date, value, changeValue }) => {
   const [recurrenceDialogOpen, setRecurrenceDialogOpen] = useState(false);
@@ -50,103 +51,34 @@ const RecurrenceSelector = ({ id, date, value, changeValue }) => {
 
   return (
     <>
-      <Select
-        id={id}
-        displayEmpty
+      <CustomSelectInput
+        name={id}
         value={value}
-        MenuProps={{
-          PaperProps: {
-            elevation: 0,
-            sx: {
-              mt: 1,
-              py: 0.4,
-              maxHeight: "400px",
-              backgroundColor: "#fff",
-              border: "1px solid #ccc",
-            },
+        changeValue={changeValue}
+        options={[
+          {
+            value: "no-repeat",
+            name: "Does not repeat",
           },
-        }}
-        onChange={(event) => {
-          changeValue(event?.target?.value);
-        }}
-        sx={{
-          width: "100%",
-          "& .MuiSelect-select": {
-            p: 0.85,
+          {
+            name: "Daily",
+            value: "daily",
           },
-          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderWidth: "1px",
+          {
+            value: "weekly",
+            name: `Weekly on ${format(date, "EEEE")}`,
           },
-        }}
-        size="small"
-      >
-        <MenuItem sx={{ p: 0.8 }} value="">
-          <Typography
-            sx={{
-              fontSize: "13px",
-              textTransform: "capitalize",
-            }}
-          >
-            Does not repeat
-          </Typography>
-        </MenuItem>
-        <MenuItem sx={{ p: 0.8 }} value="daily">
-          <Typography
-            sx={{
-              fontSize: "13px",
-              textTransform: "capitalize",
-            }}
-          >
-            Daily
-          </Typography>
-        </MenuItem>
-        <MenuItem sx={{ p: 0.8 }} value="weekly">
-          <Typography
-            sx={{
-              fontSize: "13px",
-              textTransform: "capitalize",
-            }}
-          >
-            Weekly on {format(date, "EEEE")}
-          </Typography>
-        </MenuItem>
-        <MenuItem sx={{ p: 0.8 }} value="monthly">
-          <Typography
-            sx={{
-              fontSize: "13px",
-              textTransform: "capitalize",
-            }}
-          >
-            Monthly on {getOrdinalDayOfMonth(date)}
-          </Typography>
-        </MenuItem>
-        <MenuItem sx={{ p: 0.8 }} value="yearly">
-          <Typography
-            sx={{
-              fontSize: "13px",
-              textTransform: "capitalize",
-            }}
-          >
-            Yearly on {format(date, "MMM d")}
-          </Typography>
-        </MenuItem>
-        <MenuItem
-          sx={{ p: 0.8 }}
-          value="custom"
-          onClick={() => {
-            return setRecurrenceDialogOpen(true);
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: "13px",
-              textTransform: "capitalize",
-            }}
-          >
-            Custom
-          </Typography>
-        </MenuItem>
-      </Select>
+          {
+            value: "monthly",
+            name: `Monthly on ${getOrdinalDayOfMonth(date)}`,
+          },
+          {
+            value: "yearly",
+            name: `Yearly on ${format(date, "MMM d")}`,
+          },
+        ]}
+        icon={<RepeatIcon fontSize="small" />}
+      />
       <CustomRecurrenceForm
         open={recurrenceDialogOpen}
         onClose={(eventValue) => {

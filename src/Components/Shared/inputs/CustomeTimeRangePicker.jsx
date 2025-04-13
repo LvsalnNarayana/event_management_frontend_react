@@ -2,8 +2,8 @@ import React from "react";
 
 import { Stack } from "@mui/material";
 
-import TimeSelector from "../Event/TimeSelector";
-import { timeStringGenerator } from "../../Utils/timeStringGenerator";
+import TimeSelector from "../../Event/TimeSelector";
+import { timeStringGenerator } from "../../../Utils/timeStringGenerator";
 
 const CustomeTimeRangePicker = ({
   endDate,
@@ -25,6 +25,7 @@ const CustomeTimeRangePicker = ({
           return changeStartTime(event);
         }}
       />
+      -
       <TimeSelector
         value={timeStringGenerator(endDate)}
         changeValue={(event) => {

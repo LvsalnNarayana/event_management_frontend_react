@@ -1,40 +1,71 @@
 /* eslint-disable max-statements */
-/* eslint-disable operator-linebreak */
+import { DragOverlay } from "@dnd-kit/core";
 import { setHours, setMinutes } from "date-fns";
-/* eslint-disable react/no-array-index-key */
-import React, { useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+/* eslint-disable react/no-array-index-key */
+import React, { useRef, useState, useEffect } from "react";
 
 import { Stack, Divider, Typography } from "@mui/material";
 
 import useData from "../../../Data/useData";
 import { DateState } from "../../../State/dateState";
 import { addEvent } from "../../../State/eventsState";
+import { selectEvent } from "../../../State/createEventState";
 
 const DayHoursLayout = ({ children }) => {
   const { hours } = useData();
-  const containerRef = useRef(null);
   const dispatch = useDispatch();
+  const containerRef = useRef(null);
   const { selectedDate } = useSelector(DateState);
+  const newEventState = useSelector(selectEvent);
+
+  const [containerTop, setContainerTop] = useState(0);
+  const [activeEvent, setActiveEvent] = useState(null);
+  const [containerScrollValue, setContainerScrollValue] = useState(0);
 
   const nineAmRef = useRef(null);
 
+  // Set up a scroll listener that updates containerScrollValue
   useEffect(() => {
-    if (containerRef.current && nineAmRef.current) {
-      containerRef.current.scrollTop =
-        nineAmRef.current.offsetTop - containerRef.current.offsetTop + 5;
+    const handleScroll = (event) => {
+      const container = event.target;
+      const currentlyScrolled = container.scrollTop;
+
+      setContainerScrollValue(currentlyScrolled);
+    };
+
+    // Copy the ref so it doesn’t change during cleanup.
+    const container = containerRef.current;
+
+    if (container) {
+      // Save container's top once on mount.
+      setContainerTop(container.getBoundingClientRect().top);
+      container.addEventListener("scroll", handleScroll);
     }
-  }, [selectedDate]);
+
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (nineAmRef.current) {
+      nineAmRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
 
   return (
     <Stack
       ref={containerRef}
       width="100%"
       sx={{
-        pr: 3,
+        pr: 1,
+        height: "100%",
         overflowY: "auto",
+        overflowX: "hidden",
         position: "relative",
-        height: "calc(100vh - 137px)",
       }}
     >
       {hours.map((hour, index) => {
@@ -44,18 +75,17 @@ const DayHoursLayout = ({ children }) => {
           <Stack
             key={index}
             gap={0}
+            flexShrink={0}
             component="div"
             onClick={(event) => {
               const target = event.currentTarget;
               const rect = target.getBoundingClientRect();
               const yPosition = event.clientY - rect.top;
-
               let hourInt = parseInt(hour.split(" ")[0], 10);
 
               if (hour.split(" ")[1].toLowerCase() === "pm") {
                 hourInt += 12;
               }
-
               let startMinutes = 0;
 
               if (yPosition < 12) {
@@ -70,6 +100,7 @@ const DayHoursLayout = ({ children }) => {
 
               dispatch(
                 addEvent({
+                  ...newEventState,
                   title: "",
                   description: "",
                   endTime: setMinutes(
@@ -93,7 +124,6 @@ const DayHoursLayout = ({ children }) => {
             <Typography
               variant="body1"
               sx={{
-                mb: -1,
                 flexShrink: 0,
                 width: "53px",
                 fontWeight: 600,
@@ -103,6 +133,7 @@ const DayHoursLayout = ({ children }) => {
                 color: "#00000080",
                 alignItems: "center",
                 justifyContent: "flex-end",
+                mb: index === (hours?.length || 0) - 1 ? 0 : -1,
               }}
             >
               {hour}
@@ -112,7 +143,63 @@ const DayHoursLayout = ({ children }) => {
           </Stack>
         );
       })}
-      <>{children}</>
+      <>
+        {React.Children.map(children, (child) => {
+          if (React.isValidElement(child)) {
+            return React.cloneElement(child, {
+              containerTop,
+              setActiveEvent,
+              containerScrollValue,
+            });
+          }
+
+          return child;
+        })}
+      </>
+      <DragOverlay
+        dropAnimation={{
+          duration: 0,
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+        style={{
+          zIndex: 100,
+        }}
+        cursor="move"
+        wrapperElement="div"
+        className="drag-overlay"
+        id="drag-overlay"
+      >
+        <Stack
+          id={activeEvent?.eventId}
+          component="div"
+          direction="row"
+          justifyContent="flex-start"
+          alignItems="center"
+          width="100%"
+          sx={{
+            opacity: 0.5,
+            borderRadius: 1,
+            overflow: "hidden",
+            position: "absolute",
+            height: activeEvent?.height,
+            backgroundColor: activeEvent?.event?.eventColor,
+          }}
+        >
+          <Typography
+            variant="body1"
+            sx={{
+              left: 10,
+              flexGrow: 1,
+              color: "white",
+              position: "absolute",
+              transform: "translateY(-50%)",
+              fontSize: activeEvent?.height > 20 ? "12px" : "10px",
+            }}
+          >
+            {`${activeEvent?.event?.title} - (${activeEvent?.draggableTimeString})`}
+          </Typography>
+        </Stack>
+      </DragOverlay>
     </Stack>
   );
 };

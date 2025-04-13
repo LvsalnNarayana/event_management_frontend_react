@@ -1,8 +1,12 @@
 /* eslint-disable no-param-reassign */
+import { addHours } from "date-fns";
 import { createSlice } from "@reduxjs/toolkit";
+
+import roundToNearest15Minutes from "../Utils/roundNearest15Min";
 
 const initialState = [
   {
+    saved: true,
     guestCount: 150,
     timezone: "UTC",
     status: "tentative",
@@ -12,9 +16,9 @@ const initialState = [
     seriesId: "series_456",
     title: "Tech Trends 2024 Webinar",
     categories: ["Webinar", "Technology"],
-    endTime: "Thu, 13 aug 2024 10:00:00 GMT",
-    startTime: "Thu, 13 aug 2024 09:00:00 GMT",
     link: "https://example.com/event/webinar-67890",
+    endTime: roundToNearest15Minutes(addHours(new Date(), -3)).toUTCString(),
+    startTime: roundToNearest15Minutes(addHours(new Date(), -4)).toUTCString(),
     description:
       "Join us for an insightful webinar on the latest technology trends for 2024.",
     recurrence: {
@@ -101,6 +105,7 @@ export const eventsState = createSlice({
     },
     updateEvent: (state, action) => {
       const { eventId, ...updatedProperties } = action.payload;
+
       const index = state.findIndex((event) => {
         return event.eventId === eventId;
       });
@@ -111,87 +116,13 @@ export const eventsState = createSlice({
     },
     addEvent: (state, action) => {
       state.push({
-        guestCount: 150,
-        timezone: "UTC",
-        status: "tentative",
-        visibility: "public",
-        eventColor: "#1E90FF",
-        seriesId: "series_456",
+        ...action.payload,
+        saved: false,
         title: action.payload.title || "",
         endTime: action.payload.endTime || "",
-        categories: ["Webinar", "Technology"],
+        eventId: `event_id_${state.length + 1}`,
         startTime: action.payload.startTime || "",
         description: action.payload.description || "",
-        eventId: `event_id_${initialState.length + 1}`,
-        link: "https://example.com/event/webinar-67890",
-        recurrence: {
-          until: "",
-          interval: 1,
-          frequency: "",
-          daysOfWeek: [],
-        },
-        location: {
-          room: "Virtual",
-          address: "Online",
-          coordinates: {
-            latitude: null,
-            longitude: null,
-          },
-        },
-        attachments: [
-          {
-            id: "attachment_002",
-            name: "Presentation.pptx",
-            link: "https://example.com/attachments/presentation.pptx",
-          },
-        ],
-        organizer: {
-          id: "organizer_002",
-          lastname: "Host",
-          phone: "+0987654321",
-          firstname: "Webinar",
-          reminders: ["email"],
-          username: "webinarhost",
-          email: "webinarhost@example.com",
-          settings: {
-            status: "active",
-            notifications: [
-              {
-                id: "notif_002",
-                type: "popup",
-                timeBeforeEvent: 30,
-              },
-            ],
-          },
-        },
-        guests: [
-          {
-            id: "guest_003",
-            reminders: [],
-            lastname: "Brown",
-            status: "declined",
-            firstname: "Charlie",
-            email: "charlie@example.com",
-            settings: {
-              canModifyEvent: false,
-              canSeeGuestList: true,
-              canInviteOthers: false,
-            },
-          },
-          {
-            id: "guest_004",
-            firstname: "David",
-            status: "accepted",
-            lastname: "Williams",
-            reminders: ["popup"],
-            email: "david@example.com",
-            settings: {
-              canModifyEvent: true,
-              canInviteOthers: true,
-              canSeeGuestList: true,
-            },
-          },
-        ],
       });
     },
   },

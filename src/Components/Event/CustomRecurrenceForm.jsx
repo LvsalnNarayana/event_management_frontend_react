@@ -16,8 +16,8 @@ import {
   FormControlLabel,
 } from "@mui/material";
 
-import CustomDatePicker from "../Shared/CustomDatePicker";
-import CustomNumberInput from "../Shared/CustomNumberInput";
+import CustomDatePicker from "../Shared/inputs/CustomDatePicker";
+import CustomNumberInput from "../Shared/inputs/CustomNumberInput";
 
 const CustomRecurrenceForm = ({ open, onClose }) => {
   const [repeatValue, setRepeatValue] = useState(1);
@@ -164,7 +164,7 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                   return setRepeatWeekDays(
                     repeatWeekDays?.filter((day) => {
                       return day !== "monday";
-                    })
+                    }),
                   );
                 }
 
@@ -195,7 +195,7 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                   return setRepeatWeekDays(
                     repeatWeekDays?.filter((day) => {
                       return day !== "tuesday";
-                    })
+                    }),
                   );
                 }
 
@@ -226,7 +226,7 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                   return setRepeatWeekDays(
                     repeatWeekDays?.filter((day) => {
                       return day !== "wednesday";
-                    })
+                    }),
                   );
                 }
 
@@ -257,7 +257,7 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                   return setRepeatWeekDays(
                     repeatWeekDays?.filter((day) => {
                       return day !== "thursday";
-                    })
+                    }),
                   );
                 }
 
@@ -288,7 +288,7 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                   return setRepeatWeekDays(
                     repeatWeekDays?.filter((day) => {
                       return day !== "friday";
-                    })
+                    }),
                   );
                 }
 
@@ -319,7 +319,7 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                   return setRepeatWeekDays(
                     repeatWeekDays?.filter((day) => {
                       return day !== "saturday";
-                    })
+                    }),
                   );
                 }
 
