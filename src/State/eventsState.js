@@ -91,6 +91,94 @@ const initialState = [
     ],
   },
 ];
+const test = {
+  persisted: true,
+  timezone: "UTC",
+  status: "TENTATIVE",
+  visibility: "PUBLIC",
+  eventId: "event_id_1",
+  eventColor: "#1E90FF",
+  seriesId: "series_456",
+  endTime: "2025-04-08T11:00:00Z",
+  title: "Tech Trends 2024 Webinar",
+  startTime: "2025-04-08T10:00:00Z",
+  createdAt: "2025-04-01T09:00:00Z",
+  updatedAt: "2025-04-08T09:00:00Z",
+  categories: ["Webinar", "Technology"],
+  link: "https://example.com/event/webinar-67890",
+  recurrence: {
+    recurrenceRule: "FREQ=DAILY;INTERVAL=1;UNTIL=2025-12-31T23:59:59Z",
+  },
+  description:
+    "Join us for an insightful webinar on the latest technology trends for 2024.",
+  location: {
+    isVirtual: true,
+    room: "Virtual",
+    address: "Online",
+    coordinates: {
+      latitude: null,
+      longitude: null,
+    },
+  },
+  attachments: [
+    {
+      id: "attachment_002",
+      name: "Presentation.pptx",
+      link: "https://example.com/attachments/presentation.pptx",
+    },
+  ],
+  organizer: {
+    id: "organizer_002",
+    lastName: "Host",
+    role: "ORGANIZER",
+    firstName: "Webinar",
+    phone: "+0987654321",
+    reminders: ["EMAIL"],
+    username: "webinarhost",
+    email: "webinarhost@example.com",
+    settings: {
+      status: "ACTIVE",
+      notifications: [
+        {
+          id: "notif_002",
+          type: "POPUP",
+          isEnabled: true,
+          timeBeforeEvent: 30,
+        },
+      ],
+    },
+  },
+  guests: [
+    {
+      id: "guest_003",
+      reminders: [],
+      role: "GUEST",
+      lastName: "Brown",
+      status: "DECLINED",
+      firstName: "Charlie",
+      email: "charlie@example.com",
+      settings: {
+        canModifyEvent: false,
+        canSeeGuestList: true,
+        canInviteOthers: false,
+      },
+    },
+    {
+      id: "guest_004",
+      role: "GUEST",
+      firstName: "David",
+      status: "ACCEPTED",
+      lastName: "Williams",
+      reminders: ["POPUP"],
+      email: "david@example.com",
+      settings: {
+        canModifyEvent: true,
+        canSeeGuestList: true,
+        canInviteOthers: true,
+      },
+    },
+  ],
+};
 
 export const eventsState = createSlice({
   initialState,

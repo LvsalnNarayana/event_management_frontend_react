@@ -3,14 +3,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
-import {
-  format,
-  addDays,
-  getDate,
-  isSameDay,
-  startOfDay,
-  startOfWeek,
-} from "date-fns";
+import { format, addDays, getDate, isSameDay, startOfWeek } from "date-fns";
 
 import { Stack, Divider, Typography } from "@mui/material";
 

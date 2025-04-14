@@ -64,8 +64,8 @@ const EventDetails = ({ event, onClose }) => {
         >
           <Typography variant="h6">{event?.title}</Typography>
           <Typography variant="body1" sx={{ fontSize: "14px" }}>
-            {format(event.startTime, "EEEE, MMMM dd, yyyy, hh:mm aa")} -{" "}
-            {format(event.endTime, "hh:mm aa")}
+            {format(event?.startTime, "EEEE, MMMM dd, yyyy, hh:mm aa")} -{" "}
+            {format(event?.endTime, "hh:mm aa")}
           </Typography>
         </Stack>
       </Stack>

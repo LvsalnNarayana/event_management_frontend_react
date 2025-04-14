@@ -80,7 +80,11 @@ const Event = ({ event, eventType, ...additionalProps }) => {
           anchor={eventPopupAnchor}
           onClose={handlePopoverClose}
         >
-          {event?.saved ? <EventDetails /> : <EventCreationForm />}
+          {event?.saved ? (
+            <EventDetails event={event} />
+          ) : (
+            <EventCreationForm />
+          )}
         </EventPopover>
       )}
       {eventColorOpen && (
