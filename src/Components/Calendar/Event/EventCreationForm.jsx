@@ -1,13 +1,20 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { Stack, Button, Divider, IconButton } from "@mui/material";
 
 import EventForm from "../../Event/EventForm";
+import { updateEvent } from "../../../State/eventsState";
+import { selectCreateEventForm } from "../../../State/createEventState";
 
-const EventCreationForm = ({ onClose }) => {
+const EventCreationForm = ({ onClose, eventState }) => {
   const dispatch = useDispatch();
+  const eventFormState = useSelector(selectCreateEventForm);
+
+  const saveEvent = () => {
+    dispatch(updateEvent(eventFormState));
+  };
 
   return (
     <Stack
@@ -37,13 +44,16 @@ const EventCreationForm = ({ onClose }) => {
           py: 0.5,
           flexGrow: 1,
           width: "100%",
+          height: "100%",
           overflowY: "auto",
+          maxHeight: "100%",
         }}
       >
-        <EventForm />
+        <EventForm eventState={eventState} />
       </Stack>
       <Divider />
       <Stack
+        flexShrink={0}
         p={1}
         gap={0.5}
         sx={{ width: "100%" }}
@@ -58,7 +68,7 @@ const EventCreationForm = ({ onClose }) => {
           disableRipple
           disableFocusRipple
           disableTouchRipple
-          onClick={onClose}
+          onClick={saveEvent}
         >
           Save
         </Button>

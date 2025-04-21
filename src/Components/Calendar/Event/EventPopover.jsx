@@ -6,6 +6,10 @@ const EventPopover = ({ id, open, anchor, onClose, children }) => {
   return (
     <Popover
       disablePortal
+      keepMounted
+      disableAutoFocus
+      disableEnforceFocus
+      disableRestoreFocus
       TransitionComponent={Slide}
       TransitionProps={{ direction: "up" }}
       id={`${id}_popper`}

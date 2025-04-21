@@ -2,116 +2,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { createSlice } from "@reduxjs/toolkit";
 
-const event = {
-  guestCount: 2,
-  status: "confirmed",
-  visibility: "public",
-  eventColor: "#FF5733",
-  seriesId: "series_id_1",
-  title: "Project Meeting",
-  timezone: "America/New_York",
-  categories: ["Work", "Team Meeting"],
-  endTime: new Date("2024-08-03T15:00:00"),
-  link: "https://example.com/meeting-link",
-  startTime: new Date("2024-08-03T14:00:00"),
-  description: "Discussing the upcoming project milestones and deadlines.",
-  recurrence: {
-    interval: 1,
-    frequency: "weekly",
-    until: new Date("2024-12-31"),
-    daysOfWeek: ["Monday", "Wednesday"],
-  },
-  location: {
-    room: "Conference Room B",
-    address: "123 Main St, Anytown, USA",
-    coordinates: {
-      latitude: 40.712776,
-      longitude: -74.005974,
-    },
-  },
-  attachments: [
-    {
-      id: "attachment_1",
-      name: "Project Plan.pdf",
-      mimeType: "application/pdf",
-      url: "https://example.com/project_plan.pdf",
-    },
-  ],
-  organizer: {
-    id: "user_id_1",
-    lastname: "Doe",
-    firstname: "John",
-    phone: "+1-555-123-4567",
-    email: "john.doe@example.com",
-    username: "organizer_username",
-    settings: {
-      status: "active",
-      reminders: [
-        {
-          id: "event_reminder_id_1",
-          label: "Email Reminder",
-          value: "10 minutes before",
-          date_time: new Date().toISOString(),
-        },
-      ],
-    },
-  },
-  guests: [
-    {
-      id: "user_id_2",
-      rsvp: "accepted",
-      role: "attendee",
-      firstname: "Jane",
-      lastname: "Smith",
-      username: "jane_smith",
-      phone: "+1-555-234-5678",
-      email: "jane.smith@example.com",
-      settings: {
-        canModify: true,
-        canInviteOthers: true,
-        canSeeGuestList: true,
-      },
-
-      reminders: [
-        {
-          type: "email",
-          time: "15 minutes before",
-        },
-        {
-          type: "popup",
-          time: "10 minutes before",
-        },
-      ],
-    },
-    {
-      id: "user_id_3",
-      rsvp: "declined",
-      role: "optional",
-      lastname: "Brown",
-      firstname: "Michael",
-      phone: "+1-555-345-6789",
-      username: "michael_brown",
-      email: "michael.brown@example.com",
-      settings: {
-        canModify: false,
-        canSeeGuestList: true,
-        canInviteOthers: false,
-      },
-
-      reminders: [
-        {
-          type: "email",
-          time: "15 minutes before",
-        },
-        {
-          type: "popup",
-          time: "10 minutes before",
-        },
-      ],
-    },
-  ],
-};
-
 // Initial state for the event slice
 const initialState = {
   link: "",
@@ -128,37 +18,45 @@ const initialState = {
   eventColor: "#FF5733",
   endTime: new Date("2024", "08", "16", "10", "00"),
   startTime: new Date("2024", "08", "16", "09", "00"),
-  permissions: {
-    modify: false,
-    invite: false,
-    seeGuests: false,
+  guestPermissions: {
+    modify: true,
+    invite: true,
+    seeGuests: true,
+  },
+  recurrence: {
+    until: "",
+    interval: 1,
+    daysOfMonth: [],
+    endType: "never",
+    frequency: "WEEK",
+    occurrenceCount: null,
+    daysOfWeek: ["MON", "WED", "FRI"],
   },
   location: {
-    address: "123 Main St, Anytown, USA",
+    zip: "",
+    city: "",
+    state: "",
+    street: "",
+    country: "",
+    address: "Online",
     coordinates: {
-      latitude: 40.712776,
-      longitude: -74.005974,
+      latitude: null,
+      longitude: null,
     },
   },
   organizer: {
     id: "",
-    email: "",
     phone: "",
-    username: "",
+    email: "",
     lastname: "",
+    username: "",
     firstname: "",
+    reminders: [],
     settings: {
-      status: "active",
-    },
-  },
-  recurrence: {
-    frequency: 2,
-    daysOfWeek: [],
-    interval: "month",
-    until: new Date("2024", "12", "31"),
-    monthlyOn: {
-      value: "1",
-      type: "day",
+      color: "",
+      status: "",
+      timezone: "UTC",
+      notifications: [],
     },
   },
 };
@@ -188,10 +86,6 @@ export const createEventSlice = createSlice({
     setEndTime: (state, action) => {
       state.endTime = action.payload;
     },
-    // Set the event's location details
-    setLocation: (state, action) => {
-      state.location = action.payload;
-    },
     // Set the start time of the event
     setStartTime: (state, action) => {
       state.startTime = action.payload;
@@ -216,6 +110,13 @@ export const createEventSlice = createSlice({
     addAttachment: (state, action) => {
       state.attachments.push(action.payload);
     },
+    setEventState: (state, action) => {
+      return { ...state, ...action.payload };
+    },
+    // Set the event's location details
+    setLocationAddress: (state, action) => {
+      state.location.address = action.payload;
+    },
     // Set the organizer's information
     setOrganizer: (state, action) => {
       state.organizer = { ...state.organizer, ...action.payload };
@@ -228,6 +129,10 @@ export const createEventSlice = createSlice({
     addGuest: (state, action) => {
       state.guests.push(action.payload);
       state.guestCount = state.guests.length;
+    },
+    // Set the guest permissions for the event
+    setGuestPermissions: (state, action) => {
+      state.guestPermissions = { ...state.guestPermissions, ...action.payload };
     },
     // Remove an attachment from the event
     removeAttachment: (state, action) => {
@@ -263,11 +168,11 @@ export const {
   setStatus,
   setEndTime,
   resetEvent,
-  setLocation,
   removeGuest,
   updateGuest,
   setStartTime,
   setOrganizer,
+  setEventState,
   addAttachment,
   setRecurrence,
   setVisibility,
@@ -275,10 +180,13 @@ export const {
   setCategories,
   setDescription,
   removeAttachment,
+  setLocationAddress,
+
+  setGuestPermissions,
 } = createEventSlice.actions;
 
 // Selector to get the event state
-export const selectEvent = (state) => {
+export const selectCreateEventForm = (state) => {
   return state.event;
 };
 

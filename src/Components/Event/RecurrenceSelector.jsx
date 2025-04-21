@@ -12,7 +12,7 @@ import RepeatIcon from "@mui/icons-material/Repeat";
 import CustomRecurrenceForm from "./CustomRecurrenceForm";
 import CustomSelectInput from "../Shared/inputs/CustomSelectInput";
 
-const RecurrenceSelector = ({ id, date, value, changeValue }) => {
+const RecurrenceSelector = ({ id, date, value, event, changeValue }) => {
   const [recurrenceDialogOpen, setRecurrenceDialogOpen] = useState(false);
   const getOrdinalDayOfMonth = (givenDate) => {
     const year = new Date(givenDate).getFullYear();
@@ -49,12 +49,21 @@ const RecurrenceSelector = ({ id, date, value, changeValue }) => {
     return `${occurrenceCount}${ordinalSuffix(occurrenceCount)} ${weekdayName}`;
   };
 
+  const changeRecurrenceValue = (eventValue) => {
+    if (eventValue === "custom") {
+      setRecurrenceDialogOpen(true);
+    } else {
+      setRecurrenceDialogOpen(false);
+      changeValue(eventValue);
+    }
+  };
+
   return (
     <>
       <CustomSelectInput
         name={id}
         value={value}
-        changeValue={changeValue}
+        changeValue={changeRecurrenceValue}
         options={[
           {
             value: "no-repeat",
@@ -76,10 +85,15 @@ const RecurrenceSelector = ({ id, date, value, changeValue }) => {
             value: "yearly",
             name: `Yearly on ${format(date, "MMM d")}`,
           },
+          {
+            name: `Custom`,
+            value: "custom",
+          },
         ]}
         icon={<RepeatIcon fontSize="small" />}
       />
       <CustomRecurrenceForm
+        event={event}
         open={recurrenceDialogOpen}
         onClose={(eventValue) => {
           return setRecurrenceDialogOpen(eventValue);

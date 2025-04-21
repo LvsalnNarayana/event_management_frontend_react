@@ -1,22 +1,12 @@
 /* eslint-disable operator-linebreak */
 /* eslint-disable multiline-ternary */
 /* eslint-disable no-extra-parens */
-import React, { useState } from "react";
+import React from "react";
 
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import {
-  Stack,
-  Select,
-  useTheme,
-  MenuItem,
-  Typography,
-  IconButton,
-} from "@mui/material";
+import { Stack, Select, useTheme, MenuItem, Typography } from "@mui/material";
 
 const CustomSelectInput = ({
   sx,
-  type,
   name,
   icon,
   label,
@@ -32,13 +22,6 @@ const CustomSelectInput = ({
   optionsFontSize,
 }) => {
   const theme = useTheme();
-  const [showPassword, setShowPassword] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    return setShowPassword((prev) => {
-      return !prev;
-    });
-  };
 
   return (
     <Stack
@@ -67,6 +50,7 @@ const CustomSelectInput = ({
         {icon}
         <Select
           id={`${name?.toLowerCase()}_select_input`}
+          name={name?.toLowerCase()}
           value={value}
           onChange={(e) => {
             return changeValue(e.target.value);

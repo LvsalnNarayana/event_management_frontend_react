@@ -10,14 +10,14 @@ import { Stack, Divider, Typography } from "@mui/material";
 import useData from "../../../Data/useData";
 import { DateState } from "../../../State/dateState";
 import { addEvent } from "../../../State/eventsState";
-import { selectEvent } from "../../../State/createEventState";
+import { selectCreateEventForm } from "../../../State/createEventState";
 
 const DayHoursLayout = ({ children }) => {
   const { hours } = useData();
   const dispatch = useDispatch();
   const containerRef = useRef(null);
   const { selectedDate } = useSelector(DateState);
-  const newEventState = useSelector(selectEvent);
+  const newEventState = useSelector(selectCreateEventForm);
 
   const [containerTop, setContainerTop] = useState(0);
   const [activeEvent, setActiveEvent] = useState(null);

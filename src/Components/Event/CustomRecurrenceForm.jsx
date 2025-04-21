@@ -1,28 +1,29 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable comma-dangle */
-/* eslint-disable max-lines */
+/* eslint-disable operator-linebreak */
+/* eslint-disable no-extra-parens */
 /* eslint-disable multiline-ternary */
-import React, { useState } from "react";
+/* eslint-disable max-lines */
+import React from "react";
+import { useDispatch } from "react-redux";
 
 import { CloseOutlined } from "@mui/icons-material";
 import {
   Stack,
   Radio,
   Dialog,
-  Select,
-  MenuItem,
   Typography,
   IconButton,
   FormControlLabel,
 } from "@mui/material";
 
+import { setRecurrence } from "../../State/createEventState";
 import CustomDatePicker from "../Shared/inputs/CustomDatePicker";
 import CustomNumberInput from "../Shared/inputs/CustomNumberInput";
+import CustomSelectInput from "../Shared/inputs/CustomSelectInput";
 
-const CustomRecurrenceForm = ({ open, onClose }) => {
-  const [repeatValue, setRepeatValue] = useState(1);
-  const [interval, setInterval] = useState("day");
-  const [repeatWeekDays, setRepeatWeekDays] = useState(["saturday"]);
+const CustomRecurrenceForm = ({ open, event, onClose }) => {
+  const { recurrence } = event || {};
+
+  const dispatch = useDispatch();
 
   return (
     <Dialog
@@ -64,78 +65,50 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
       >
         <Stack
           gap={1}
+          width="100%"
           direction="row"
           justifyContent="flex-start"
           alignItems="center"
         >
-          <Typography variant="body1" sx={{ fontSize: "14px" }}>
+          <Typography variant="body1" sx={{ flexShrink: 0, fontSize: "14px" }}>
             Repeat every
           </Typography>
           <CustomNumberInput
-            value={repeatValue}
+            value={recurrence?.interval}
             changeValue={(value) => {
-              return setRepeatValue(value);
+              dispatch(
+                setRecurrence({
+                  ...event?.recurrence,
+                  interval: value,
+                }),
+              );
             }}
           />
-          <Select
-            displayEmpty
-            value={interval}
-            MenuProps={{
-              PaperProps: {
-                elevation: 0,
-                sx: {
-                  mt: 1,
-                  py: 0.4,
-                  maxHeight: "400px",
-                  backgroundColor: "#fff",
-                  border: "1px solid #ccc",
-                },
-              },
+          <CustomSelectInput
+            name="recurrence_frequency_selector"
+            onChange={(frequencyEvent) => {
+              dispatch(
+                setRecurrence({
+                  ...event?.recurrence,
+                  frequency: frequencyEvent?.target?.value,
+                }),
+              );
             }}
-            onChange={(event) => {
-              return setInterval(event.target.value);
-            }}
-            sx={{
-              width: "100px",
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderWidth: "1px",
-              },
-              "& .MuiSelect-select": {
-                p: 0.5,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              },
-            }}
-            size="small"
-          >
-            <MenuItem sx={{ p: 0.8 }} value="day">
-              <Typography variant="body1" sx={{ fontSize: "12px" }}>
-                {repeatValue > 1 ? "Days" : "Day"}
-              </Typography>
-            </MenuItem>
-            <MenuItem sx={{ p: 0.8 }} value="week">
-              <Typography variant="body1" sx={{ fontSize: "12px" }}>
-                {repeatValue > 1 ? "Weeks" : "Week"}
-              </Typography>
-            </MenuItem>
-            <MenuItem sx={{ p: 0.8 }} value="month">
-              <Typography variant="body1" sx={{ fontSize: "12px" }}>
-                {repeatValue > 1 ? "Months" : "Month"}
-              </Typography>
-            </MenuItem>
-            <MenuItem sx={{ p: 0.8 }} value="year">
-              <Typography variant="body1" sx={{ fontSize: "12px" }}>
-                {repeatValue > 1 ? "Years" : "Year"}
-              </Typography>
-            </MenuItem>
-          </Select>
+            value={recurrence?.frequency || "DAY"}
+            options={[
+              { name: "Day", value: "DAY" },
+              { name: "Week", value: "WEEK" },
+              { name: "Month", value: "MONTH" },
+              { name: "Year", value: "YEAR" },
+            ]}
+          />
         </Stack>
         <Stack gap={1}>
           <Typography variant="body1" sx={{ fontSize: "14px" }}>
             Repeat on
           </Typography>
           <Stack
+            component="div"
             direction="row"
             justifyContent="flex-start"
             alignItems="center"
@@ -152,7 +125,30 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                 fontSize: "12px",
                 cursor: "pointer",
                 borderRadius: "100%",
-                backgroundColor: "#cccccc60",
+                color: recurrence?.daysOfWeek?.includes("SUN")
+                  ? "#fff"
+                  : "#000",
+                backgroundColor: recurrence?.daysOfWeek?.includes("SUN")
+                  ? "#1434A4"
+                  : "#cccccc60",
+              }}
+              onClick={() => {
+                const daysOfWeek = [...(recurrence?.daysOfWeek || [])];
+
+                const index = daysOfWeek.indexOf("SUN");
+
+                if (index > -1) {
+                  daysOfWeek.splice(index, 1);
+                } else {
+                  daysOfWeek.push("SUN");
+                }
+
+                dispatch(
+                  setRecurrence({
+                    ...event?.recurrence,
+                    daysOfWeek,
+                  }),
+                );
               }}
             >
               S
@@ -160,15 +156,22 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
             <Stack
               component="div"
               onClick={() => {
-                if (repeatWeekDays?.includes("monday")) {
-                  return setRepeatWeekDays(
-                    repeatWeekDays?.filter((day) => {
-                      return day !== "monday";
-                    }),
-                  );
+                const daysOfWeek = [...(recurrence?.daysOfWeek || [])];
+
+                const index = daysOfWeek.indexOf("MON");
+
+                if (index > -1) {
+                  daysOfWeek.splice(index, 1);
+                } else {
+                  daysOfWeek.push("MON");
                 }
 
-                return setRepeatWeekDays([...repeatWeekDays, "monday"]);
+                dispatch(
+                  setRecurrence({
+                    ...event?.recurrence,
+                    daysOfWeek,
+                  }),
+                );
               }}
               direction="row"
               justifyContent="center"
@@ -180,8 +183,10 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                 fontSize: "12px",
                 cursor: "pointer",
                 borderRadius: "100%",
-                color: repeatWeekDays?.includes("monday") ? "#fff" : "#000",
-                backgroundColor: repeatWeekDays?.includes("monday")
+                color: recurrence?.daysOfWeek?.includes("MON")
+                  ? "#fff"
+                  : "#000",
+                backgroundColor: recurrence?.daysOfWeek?.includes("MON")
                   ? "#1434A4"
                   : "#cccccc60",
               }}
@@ -191,15 +196,22 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
             <Stack
               component="div"
               onClick={() => {
-                if (repeatWeekDays?.includes("tuesday")) {
-                  return setRepeatWeekDays(
-                    repeatWeekDays?.filter((day) => {
-                      return day !== "tuesday";
-                    }),
-                  );
+                const daysOfWeek = [...(recurrence?.daysOfWeek || [])];
+
+                const index = daysOfWeek.indexOf("TUE");
+
+                if (index > -1) {
+                  daysOfWeek.splice(index, 1);
+                } else {
+                  daysOfWeek.push("TUE");
                 }
 
-                return setRepeatWeekDays([...repeatWeekDays, "tuesday"]);
+                dispatch(
+                  setRecurrence({
+                    ...event?.recurrence,
+                    daysOfWeek,
+                  }),
+                );
               }}
               direction="row"
               justifyContent="center"
@@ -211,8 +223,10 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                 fontSize: "12px",
                 cursor: "pointer",
                 borderRadius: "100%",
-                color: repeatWeekDays?.includes("tuesday") ? "#fff" : "#000",
-                backgroundColor: repeatWeekDays?.includes("tuesday")
+                color: recurrence?.daysOfWeek?.includes("TUE")
+                  ? "#fff"
+                  : "#000",
+                backgroundColor: recurrence?.daysOfWeek?.includes("TUE")
                   ? "#1434A4"
                   : "#cccccc60",
               }}
@@ -222,15 +236,22 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
             <Stack
               component="div"
               onClick={() => {
-                if (repeatWeekDays?.includes("wednesday")) {
-                  return setRepeatWeekDays(
-                    repeatWeekDays?.filter((day) => {
-                      return day !== "wednesday";
-                    }),
-                  );
+                const daysOfWeek = [...(recurrence?.daysOfWeek || [])];
+
+                const index = daysOfWeek.indexOf("WED");
+
+                if (index > -1) {
+                  daysOfWeek.splice(index, 1);
+                } else {
+                  daysOfWeek.push("WED");
                 }
 
-                return setRepeatWeekDays([...repeatWeekDays, "wednesday"]);
+                dispatch(
+                  setRecurrence({
+                    ...event?.recurrence,
+                    daysOfWeek,
+                  }),
+                );
               }}
               direction="row"
               justifyContent="center"
@@ -242,8 +263,10 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                 fontSize: "12px",
                 cursor: "pointer",
                 borderRadius: "100%",
-                color: repeatWeekDays?.includes("wednesday") ? "#fff" : "#000",
-                backgroundColor: repeatWeekDays?.includes("wednesday")
+                color: recurrence?.daysOfWeek?.includes("WED")
+                  ? "#fff"
+                  : "#000",
+                backgroundColor: recurrence?.daysOfWeek?.includes("WED")
                   ? "#1434A4"
                   : "#cccccc60",
               }}
@@ -253,15 +276,22 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
             <Stack
               component="div"
               onClick={() => {
-                if (repeatWeekDays?.includes("thursday")) {
-                  return setRepeatWeekDays(
-                    repeatWeekDays?.filter((day) => {
-                      return day !== "thursday";
-                    }),
-                  );
+                const daysOfWeek = [...(recurrence?.daysOfWeek || [])];
+
+                const index = daysOfWeek.indexOf("THU");
+
+                if (index > -1) {
+                  daysOfWeek.splice(index, 1);
+                } else {
+                  daysOfWeek.push("THU");
                 }
 
-                return setRepeatWeekDays([...repeatWeekDays, "thursday"]);
+                dispatch(
+                  setRecurrence({
+                    ...event?.recurrence,
+                    daysOfWeek,
+                  }),
+                );
               }}
               direction="row"
               justifyContent="center"
@@ -273,8 +303,11 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                 fontSize: "12px",
                 cursor: "pointer",
                 borderRadius: "100%",
-                color: repeatWeekDays?.includes("thursday") ? "#fff" : "#000",
-                backgroundColor: repeatWeekDays?.includes("thursday")
+                color: recurrence?.daysOfWeek?.includes("THU")
+                  ? "#fff"
+                  : "#000",
+
+                backgroundColor: recurrence?.daysOfWeek?.includes("THU")
                   ? "#1434A4"
                   : "#cccccc60",
               }}
@@ -284,15 +317,22 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
             <Stack
               component="div"
               onClick={() => {
-                if (repeatWeekDays?.includes("friday")) {
-                  return setRepeatWeekDays(
-                    repeatWeekDays?.filter((day) => {
-                      return day !== "friday";
-                    }),
-                  );
+                const daysOfWeek = [...(recurrence?.daysOfWeek || [])];
+
+                const index = daysOfWeek.indexOf("FRI");
+
+                if (index > -1) {
+                  daysOfWeek.splice(index, 1);
+                } else {
+                  daysOfWeek.push("FRI");
                 }
 
-                return setRepeatWeekDays([...repeatWeekDays, "friday"]);
+                dispatch(
+                  setRecurrence({
+                    ...event?.recurrence,
+                    daysOfWeek,
+                  }),
+                );
               }}
               direction="row"
               justifyContent="center"
@@ -304,8 +344,10 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                 fontSize: "12px",
                 cursor: "pointer",
                 borderRadius: "100%",
-                color: repeatWeekDays?.includes("friday") ? "#fff" : "#000",
-                backgroundColor: repeatWeekDays?.includes("friday")
+                color: recurrence?.daysOfWeek?.includes("FRI")
+                  ? "#fff"
+                  : "#000",
+                backgroundColor: recurrence?.daysOfWeek?.includes("FRI")
                   ? "#1434A4"
                   : "#cccccc60",
               }}
@@ -315,15 +357,22 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
             <Stack
               component="div"
               onClick={() => {
-                if (repeatWeekDays?.includes("saturday")) {
-                  return setRepeatWeekDays(
-                    repeatWeekDays?.filter((day) => {
-                      return day !== "saturday";
-                    }),
-                  );
+                const daysOfWeek = [...(recurrence?.daysOfWeek || [])];
+
+                const index = daysOfWeek.indexOf("SAT");
+
+                if (index > -1) {
+                  daysOfWeek.splice(index, 1);
+                } else {
+                  daysOfWeek.push("SAT");
                 }
 
-                return setRepeatWeekDays([...repeatWeekDays, "saturday"]);
+                dispatch(
+                  setRecurrence({
+                    ...event?.recurrence,
+                    daysOfWeek,
+                  }),
+                );
               }}
               direction="row"
               justifyContent="center"
@@ -335,8 +384,10 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
                 fontSize: "12px",
                 cursor: "pointer",
                 borderRadius: "100%",
-                color: repeatWeekDays?.includes("saturday") ? "#fff" : "#000",
-                backgroundColor: repeatWeekDays?.includes("saturday")
+                color: recurrence?.daysOfWeek?.includes("SAT")
+                  ? "#fff"
+                  : "#000",
+                backgroundColor: recurrence?.daysOfWeek?.includes("SAT")
                   ? "#1434A4"
                   : "#cccccc60",
               }}
@@ -345,13 +396,26 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
             </Stack>
           </Stack>
         </Stack>
-        <Stack gap={1}>
+        <Stack gap={1} width="100%">
           <Typography variant="body1" sx={{ fontSize: "14px" }}>
             Ends
           </Typography>
           <FormControlLabel
             label="Never"
-            control={<Radio size="small" />}
+            control={
+              <Radio
+                size="small"
+                checked={recurrence?.endType === "never"}
+                onChange={() => {
+                  dispatch(
+                    setRecurrence({
+                      ...event?.recurrence,
+                      endType: "never",
+                    }),
+                  );
+                }}
+              />
+            }
             sx={{ "& .MuiTypography-root": { fontSize: "14px" } }}
           />
           <Stack
@@ -362,7 +426,20 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
           >
             <FormControlLabel
               label="On"
-              control={<Radio size="small" />}
+              control={
+                <Radio
+                  size="small"
+                  checked={recurrence?.endType === "on"}
+                  onChange={() => {
+                    dispatch(
+                      setRecurrence({
+                        ...event?.recurrence,
+                        endType: "on",
+                      }),
+                    );
+                  }}
+                />
+              }
               sx={{
                 width: "50%",
                 flexShrink: 0,
@@ -370,13 +447,23 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
               }}
             />
             <CustomDatePicker
-              disabled
-              id="event_date_input"
+              id="event_recurrence_date_input"
               format="MMM dd, yyyy"
-              value={new Date()}
-              changeValue={(value) => {}}
+              value={
+                recurrence?.endDate ? new Date(recurrence?.endDate) : new Date()
+              }
+              disabled={recurrence?.endType !== "on"}
+              changeValue={(value) => {
+                dispatch(
+                  setRecurrence({
+                    ...event?.recurrence,
+                    endDate: value,
+                  }),
+                );
+              }}
             />
           </Stack>
+
           <Stack
             width="100%"
             direction="row"
@@ -385,7 +472,20 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
           >
             <FormControlLabel
               label="After"
-              control={<Radio size="small" />}
+              control={
+                <Radio
+                  size="small"
+                  checked={recurrence?.endType === "after"}
+                  onChange={() => {
+                    dispatch(
+                      setRecurrence({
+                        ...event?.recurrence,
+                        endType: "after",
+                      }),
+                    );
+                  }}
+                />
+              }
               sx={{
                 width: "50%",
                 flexShrink: 0,
@@ -399,10 +499,18 @@ const CustomRecurrenceForm = ({ open, onClose }) => {
               alignItems="center"
             >
               <CustomNumberInput
-                disabled={true}
-                value={repeatValue}
+                disabled={
+                  recurrence?.endType !== "after" ||
+                  recurrence?.occurrenceCount < 1
+                }
+                value={recurrence?.occurrenceCount}
                 changeValue={(value) => {
-                  return setRepeatValue(value);
+                  dispatch(
+                    setRecurrence({
+                      ...event?.recurrence,
+                      occurrenceCount: value,
+                    }),
+                  );
                 }}
               />
               <Typography variant="body1" sx={{ fontSize: "14px" }}>

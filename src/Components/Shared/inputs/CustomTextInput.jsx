@@ -76,6 +76,7 @@ const CustomTextInput = ({
             return changeValue(e.target.value);
           }}
           id={`${name?.toLowerCase()}_input_field`}
+          name={name?.toLowerCase()}
           placeholder={placeholder}
           variant="outlined"
           fullWidth
@@ -84,8 +85,8 @@ const CustomTextInput = ({
           value={value}
           disabled={disabled || false}
           sx={{
-            p: 0.2,
             my: 0,
+            p: 0.2,
             width: "100%",
 
             fontSize: fontSize || "14px",

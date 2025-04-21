@@ -11,12 +11,12 @@ import Month from "./Month/Month";
 import EventForm from "../Event/EventForm";
 import { AppState } from "../../State/appState";
 import { DateState } from "../../State/dateState";
-import { selectEvent } from "../../State/createEventState";
+import { selectCreateEventForm } from "../../State/createEventState";
 
 const Calendar = () => {
   const { currentView } = useSelector(AppState);
   const { selectedDate } = useSelector(DateState);
-  const event = useSelector(selectEvent);
+  const event = useSelector(selectCreateEventForm);
 
   return (
     <Stack

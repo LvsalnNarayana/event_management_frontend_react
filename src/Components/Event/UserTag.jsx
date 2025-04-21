@@ -21,7 +21,10 @@ const UserTag = ({ user }) => {
         justifyContent="flex-start"
         alignItems="center"
       >
-        <UserAvatar username={user?.username} width={28} />
+        <UserAvatar
+          username={user?.username || `${user?.firstname + user?.lastname}`}
+          width={28}
+        />
         <Typography variant="body1" sx={{ fontSize: "14px" }}>
           {user?.firstname} {user?.lastname}
         </Typography>

@@ -6,7 +6,7 @@ const initialState = {
   timeSlotPx: 48,
   darwerWidth: 300,
   minEventTime: 60,
-  currentView: "week",
+  currentView: "day",
   pixelToTime: 60 / 48,
   timeToPixel: 48 / 60,
 };

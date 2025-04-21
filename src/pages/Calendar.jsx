@@ -61,28 +61,6 @@ const Calendar = () => {
       {currentView === "day" && <Day selectedDate={selectedDate} />}
       {currentView === "week" && <Week selectedDate={selectedDate} />}
       {currentView === "year" && <Year />}
-      {/* {currentView === "event" && (
-        <Stack
-          direction="row"
-          justifyContent="flex-start"
-          alignItems="flex-start"
-        >
-          <Stack width="50%">
-            <EventForm />
-          </Stack>
-          <Stack width="50%">
-            <ReactJson
-              src={event}
-              name="Event Form"
-              collapsed={false}
-              enableClipboard={false}
-              displayDataTypes={false}
-              displayObjectSize={false}
-              collapseStringsAfterLength={60}
-            />
-          </Stack>
-        </Stack>
-      )} */}
     </Stack>
   );
 };

@@ -5,11 +5,12 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable comma-dangle */
 /* eslint-disable multiline-ternary */
-/* eslint-disable import/no-extraneous-dependencies */
-import React, { useState } from "react";
 import { setHours, setMinutes } from "date-fns";
+/* eslint-disable import/no-extraneous-dependencies */
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import { width } from "@mui/system";
 import LinkIcon from "@mui/icons-material/Link";
 import EventIcon from "@mui/icons-material/Event";
 import CloseIcon from "@mui/icons-material/Close";
@@ -30,8 +31,10 @@ import {
 
 import UserTag from "./UserTag";
 import TagUsers from "./TagUsers";
+import UserAvatar from "../Shared/UserAvatar";
+import ColorPicker from "../Shared/ColorPicker";
 import RecurrenceSelector from "./RecurrenceSelector";
-import OrganizerColorSelector from "./OrganizerColorSelector";
+// import { updateEvent } from "../../State/eventsState";
 import CustomTextInput from "../Shared/inputs/CustomTextInput";
 import CustomDatePicker from "../Shared/inputs/CustomDatePicker";
 import CustomSelectInput from "../Shared/inputs/CustomSelectInput";
@@ -41,19 +44,29 @@ import {
   setTitle,
   addGuest,
   setEndTime,
-  selectEvent,
   setStartTime,
+  setOrganizer,
+  setEventState,
+  setLocationAddress,
+  setGuestPermissions,
+  selectCreateEventForm,
 } from "../../State/createEventState";
 
-const EventForm = () => {
+const EventForm = ({ eventState }) => {
   const dispatch = useDispatch();
 
-  const event = useSelector(selectEvent);
+  const event = useSelector(selectCreateEventForm);
+
+  useEffect(() => {
+    dispatch(setEventState({ ...eventState }));
+  }, []);
+
   const [organizerMenuOpen, setOrganizerMenuOpen] = useState(false);
   const [permissionsMenuOpen, setPermissionsMenuOpen] = useState(false);
 
   return (
     <Stack gap={2} sx={{ px: 2, width: "100%" }}>
+      {/* //~- Event Title */}
       <CustomTextInput
         fontSize="18px"
         changeValue={(titleInputValue) => {
@@ -63,6 +76,7 @@ const EventForm = () => {
         placeholder="Add title and time"
         value={event.title}
       />
+      {/* //~- Event Date */}
       <CustomDatePicker
         id="event_date_input"
         format="dd MMMM yyyy, EEEE"
@@ -71,6 +85,7 @@ const EventForm = () => {
           dispatch(setStartTime(value.toUTCString()));
         }}
       />
+      {/* //~- Event Time */}
       <CustomeTimeRangePicker
         startDate={event?.startTime}
         endDate={event?.endTime}
@@ -95,6 +110,7 @@ const EventForm = () => {
           );
         }}
       />
+      {/* //~- Event meeting link */}
       <CustomTextInput
         name="meeting_link"
         icon={<LinkIcon fontSize="small" />}
@@ -105,15 +121,17 @@ const EventForm = () => {
         }}
         placeholder="Add meeting link"
       />
-
+      {/* //~- Event recurrence */}
       <RecurrenceSelector
         id="event_recurrence_selector"
         value="daily"
+        event={event}
         date={event.startTime}
         changeValue={(value) => {
           console.log(value);
         }}
       />
+      {/* //~- Event guests */}
       <Stack gap={2} sx={{ width: "100%" }}>
         <Stack
           direction="row"
@@ -183,7 +201,15 @@ const EventForm = () => {
                         variant="body1"
                         sx={{ fontSize: "12px", color: "#00000080" }}
                       >
-                        Invite Others
+                        {event?.guestPermissions?.invite && (
+                          <span>Invite Others</span>
+                        )}
+                        {event?.guestPermissions?.modify && (
+                          <span>Modify Event</span>
+                        )}
+                        {event?.guestPermissions?.seeGuests && (
+                          <span>See Guests</span>
+                        )}
                       </Typography>
                     )}
                   </Stack>
@@ -203,19 +229,58 @@ const EventForm = () => {
                 <Collapse in={permissionsMenuOpen}>
                   <Stack component="div" width="100%">
                     <FormControlLabel
+                      id="modify_event_permission"
                       label="Modify Event"
                       sx={{ "& .MuiTypography-root": { fontSize: "12px" } }}
-                      control={<Checkbox size="small" />}
+                      control={
+                        <Checkbox
+                          size="small"
+                          checked={event?.guestPermissions?.modify}
+                          onChange={() => {
+                            dispatch(
+                              setGuestPermissions({
+                                modify: !event?.guestPermissions?.modify,
+                              }),
+                            );
+                          }}
+                        />
+                      }
                     />
                     <FormControlLabel
+                      id="invite_others_permission"
                       label="Invite Others"
                       sx={{ "& .MuiTypography-root": { fontSize: "12px" } }}
-                      control={<Checkbox size="small" />}
+                      control={
+                        <Checkbox
+                          size="small"
+                          checked={event?.guestPermissions?.invite}
+                          onChange={() => {
+                            dispatch(
+                              setGuestPermissions({
+                                invite: !event?.guestPermissions?.invite,
+                              }),
+                            );
+                          }}
+                        />
+                      }
                     />
                     <FormControlLabel
+                      id="see_guest_list_permission"
                       label="See Guest List"
                       sx={{ "& .MuiTypography-root": { fontSize: "12px" } }}
-                      control={<Checkbox size="small" />}
+                      control={
+                        <Checkbox
+                          size="small"
+                          checked={event?.guestPermissions?.seeGuests}
+                          onChange={() => {
+                            dispatch(
+                              setGuestPermissions({
+                                seeGuests: !event?.guestPermissions?.seeGuests,
+                              }),
+                            );
+                          }}
+                        />
+                      }
                     />
                   </Stack>
                 </Collapse>
@@ -224,12 +289,17 @@ const EventForm = () => {
           </Stack>
         )}
       </Stack>
+      {/* //~- Event location */}
       <CustomTextInput
         name="location"
         placeholder="Add Location"
-        value=""
+        value={event.location.address}
+        changeValue={(locationValue) => {
+          dispatch(setLocationAddress(locationValue));
+        }}
         icon={<LocationOnIcon fontSize="small" />}
       />
+      {/* // ~- Event organizer with menu close */}
       {!organizerMenuOpen && (
         <Stack
           gap={2}
@@ -257,18 +327,25 @@ const EventForm = () => {
               setOrganizerMenuOpen(true);
             }}
           >
-            <Typography variant="body1" sx={{ fontSize: "14px" }}>
-              Narayana Lvsaln
-            </Typography>
+            <Stack direction="row" gap={1} alignItems="center">
+              <UserAvatar username={event?.organizer?.username} width={20} />
+              <Typography variant="body1" sx={{ fontSize: "14px" }}>
+                {event?.organizer?.firstname} {event?.organizer?.lastname}
+              </Typography>
+            </Stack>
             <Typography
               variant="body1"
               sx={{ fontSize: "12px", color: "#00000080" }}
             >
-              Free . The day before at 11:30pm
+              <span style={{ textTransform: "capitalize" }}>
+                {event?.organizer?.settings?.status}
+              </span>{" "}
+              . 30 Minutes before
             </Typography>
           </Stack>
         </Stack>
       )}
+      {/* //~- Event organizer with menu open */}
       {organizerMenuOpen && (
         <>
           <Stack
@@ -283,17 +360,55 @@ const EventForm = () => {
             }}
           >
             <Stack
+              width="100%"
               direction="row"
               justifyContent="flex-start"
               alignItems="center"
-              gap={2}
+              gap={1}
             >
-              <EventIcon fontSize="small" />
-              <OrganizerColorSelector />
+              <EventIcon fontSize="small" sx={{ mr: 1.5 }} />
+              <Stack
+                flexShrink={0}
+                direction="row"
+                gap={1}
+                alignItems="center"
+                width="fit-content"
+              >
+                <UserAvatar username={event?.organizer?.username} width={20} />
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: 16,
+                    color: "#000",
+                    flexShrink: 0,
+                    fontWeight: 500,
+                  }}
+                >
+                  {event?.organizer?.firstname} {event?.organizer?.lastname}
+                </Typography>
+              </Stack>
+              <ColorPicker
+                sx={{
+                  width: 20,
+                  height: 20,
+                }}
+                color={event?.organizer?.settings?.color || "#000000"}
+                setColor={(colorValue) => {
+                  dispatch(setOrganizer({ settings: { color: colorValue } }));
+                }}
+              />
             </Stack>
             <Stack pl={4} width="100%">
               <CustomSelectInput
-                value="free"
+                value={event?.organizer?.settings?.status}
+                name="organizer_status"
+                changeValue={(statusValue) => {
+                  dispatch(
+                    setOrganizer({
+                      settings: { status: statusValue },
+                    }),
+                  );
+                }}
                 options={[
                   {
                     name: "Free",
@@ -302,6 +417,10 @@ const EventForm = () => {
                   {
                     name: "Busy",
                     value: "busy",
+                  },
+                  {
+                    name: "Active",
+                    value: "active",
                   },
                 ]}
               />
@@ -321,68 +440,43 @@ const EventForm = () => {
               }}
             />
             <Stack width="100%" gap={2}>
-              <Stack
-                direction="row"
-                justifyContent="flex-start"
-                alignItems="center"
-              >
-                <CustomSelectInput
-                  value="10"
-                  options={[
-                    {
-                      value: "10",
-                      name: "10 minutes before",
-                    },
-                    {
-                      value: "30",
-                      name: "30 minutes before",
-                    },
-                    {
-                      value: "60",
-                      name: "1 hour before",
-                    },
-                  ]}
-                />
-                <IconButton>
-                  <CloseIcon
-                    fontSize="small"
-                    sx={{
-                      fontSize: 18,
-                    }}
-                  />
-                </IconButton>
-              </Stack>
-              <Stack
-                direction="row"
-                justifyContent="flex-start"
-                alignItems="center"
-              >
-                <CustomSelectInput
-                  value="10"
-                  options={[
-                    {
-                      value: "10",
-                      name: "10 minutes before",
-                    },
-                    {
-                      value: "30",
-                      name: "30 minutes before",
-                    },
-                    {
-                      value: "60",
-                      name: "1 hour before",
-                    },
-                  ]}
-                />
-                <IconButton>
-                  <CloseIcon
-                    fontSize="small"
-                    sx={{
-                      fontSize: 18,
-                    }}
-                  />
-                </IconButton>
-              </Stack>
+              {event?.organizer?.settings?.notifications?.map((notification) => {
+                return (
+                  <Stack
+                    key={notification.id}
+                    direction="row"
+                    justifyContent="flex-start"
+                    alignItems="center"
+                  >
+                    <CustomSelectInput
+                      value="10"
+                      name="reminder_timer"
+                      options={[
+                        {
+                          value: "10",
+                          name: "10 minutes before",
+                        },
+                        {
+                          value: "30",
+                          name: "30 minutes before",
+                        },
+                        {
+                          value: "60",
+                          name: "1 hour before",
+                        },
+                      ]}
+                    />
+                    <IconButton>
+                      <CloseIcon
+                        fontSize="small"
+                        sx={{
+                          fontSize: 18,
+                        }}
+                      />
+                    </IconButton>
+                  </Stack>
+                );
+              })}
             </Stack>
           </Stack>
           <Button

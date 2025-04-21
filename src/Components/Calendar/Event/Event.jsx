@@ -81,9 +81,19 @@ const Event = ({ event, eventType, ...additionalProps }) => {
           onClose={handlePopoverClose}
         >
           {event?.saved ? (
-            <EventDetails event={event} />
+            <EventDetails
+              event={event}
+              onClose={() => {
+                handlePopoverClose();
+              }}
+            />
           ) : (
-            <EventCreationForm />
+            <EventCreationForm
+              eventState={event}
+              onClose={() => {
+                handlePopoverClose();
+              }}
+            />
           )}
         </EventPopover>
       )}
